@@ -31,6 +31,72 @@
         linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 48%, #09120e 100%);
     }
     .wrap { width: min(1260px, 92vw); margin: 34px auto 60px; }
+    .dashboard-header {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+      padding: 14px 18px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(8, 20, 15, 0.92);
+      box-shadow: var(--shadow);
+    }
+    .dashboard-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: radial-gradient(circle at top left, rgba(52, 240, 138, 0.46), transparent 42%), linear-gradient(145deg, rgba(11, 34, 22, 0.98) 0%, rgba(7, 16, 12, 0.98) 100%);
+      border: 1px solid rgba(52, 240, 138, 0.28);
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 1.05rem;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24);
+      flex-shrink: 0;
+    }
+    .dashboard-brand-copy {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+    .dashboard-brand-copy strong {
+      color: #f7fff9;
+      font-size: 1.05rem;
+    }
+    .dashboard-brand-copy span {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+    .dashboard-header .session-profile {
+      flex: 1;
+      justify-content: flex-end;
+    }
+    .dashboard-header .session-avatar {
+      width: 48px;
+      height: 48px;
+    }
+    .dashboard-header .session-meta strong {
+      font-size: 1rem;
+    }
+    .dashboard-header .session-meta .hint {
+      font-size: 0.84rem;
+    }
+    .dashboard-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
     .hero { display: grid; gap: 10px; margin-bottom: 22px; }
     .hero-shell {
       grid-template-columns: 1.2fr 0.8fr;
@@ -98,6 +164,18 @@
         radial-gradient(circle at top right, rgba(52, 240, 138, 0.16), transparent 26%),
         linear-gradient(180deg, rgba(11, 24, 18, 0.98) 0%, rgba(9, 18, 14, 0.96) 100%);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+    .hero-session-head {
+      display: grid;
+      gap: 4px;
+      margin-bottom: 14px;
+    }
+    .hero-session-head strong {
+      font-size: 1rem;
+      color: #f6fff9;
+    }
+    .hero-session-head .hint {
+      color: var(--muted);
     }
     .hero-config-grid {
       display: grid;
@@ -271,15 +349,6 @@
         linear-gradient(180deg, rgba(11, 24, 18, 0.98) 0%, rgba(9, 18, 14, 0.96) 100%);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
     }
-    .hero-session .session-bar {
-      display: grid;
-      padding: 0;
-      border: 0;
-      border-radius: 0;
-      background: transparent;
-      box-shadow: none;
-      gap: 12px;
-    }
     .hero-session {
       align-self: stretch;
     }
@@ -337,9 +406,6 @@
       justify-content: flex-end;
       gap: 10px;
       flex-wrap: wrap;
-    }
-    .hero-session .session-actions {
-      justify-content: flex-start;
     }
     .settings-panel {
       display: grid;
@@ -479,6 +545,9 @@
     .app-shell:not(.locked) .hero-notes .note-card {
       display: none;
     }
+    .app-shell:not(.locked) .dashboard-header {
+      display: flex;
+    }
     .app-shell:not(.locked) .access-grid,
     .app-shell:not(.locked) .section-kicker,
     .app-shell:not(.locked) #accessTitle,
@@ -486,10 +555,71 @@
       display: none;
     }
     .app-shell:not(.locked) .access-shell {
-      grid-template-columns: 1fr;
+      display: none;
     }
     .app-shell:not(.locked) .access-side {
       display: none;
+    }
+    .app-shell:not(.locked) .hero {
+      margin-bottom: 18px;
+    }
+    .app-shell:not(.locked) .hero-copy {
+      min-height: 250px;
+    }
+    .app-shell:not(.locked) .tabbar {
+      position: sticky;
+      top: 102px;
+      align-self: start;
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border-radius: 22px;
+      min-width: 210px;
+      background:
+        linear-gradient(180deg, rgba(8,20,15,0.94) 0%, rgba(12,26,19,0.92) 100%),
+        url("/static/assets/aira-extra.png") center center / cover no-repeat;
+      overflow: hidden;
+    }
+    .app-shell:not(.locked) .tabbar::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(7, 16, 12, 0.9) 0%, rgba(8, 20, 15, 0.95) 100%);
+      z-index: 0;
+    }
+    .app-shell:not(.locked) .tabbar > * {
+      position: relative;
+      z-index: 1;
+    }
+    .app-shell:not(.locked) .tab-link {
+      text-align: left;
+      font-size: 1rem;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(52, 240, 138, 0.12);
+      background: rgba(11, 24, 18, 0.72);
+    }
+    .app-shell:not(.locked) .tab-link.active {
+      background: rgba(52, 240, 138, 0.16);
+      border-color: rgba(52, 240, 138, 0.3);
+      box-shadow: inset 0 0 0 1px rgba(52, 240, 138, 0.16), 0 12px 26px rgba(16, 184, 102, 0.12);
+    }
+    .app-shell:not(.locked) .tab-link::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      margin-right: 10px;
+      background: rgba(169, 196, 180, 0.4);
+      vertical-align: middle;
+    }
+    .app-shell:not(.locked) .tab-link.active::before {
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(52, 240, 138, 0.58);
+    }
+    .app-shell:not(.locked) .top-summary {
+      margin-bottom: 18px;
     }
     .auth-badge {
       display: inline-flex;
@@ -814,6 +944,25 @@
     details { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
     summary { cursor: pointer; color: var(--accent); font-weight: 600; margin-bottom: 10px; }
     code { background: rgba(31,109,82,0.08); padding: 2px 6px; border-radius: 8px; }
+    @media (min-width: 1121px) {
+      .app-shell:not(.locked) {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        align-items: start;
+        column-gap: 22px;
+      }
+      .app-shell:not(.locked) .dashboard-header,
+      .app-shell:not(.locked) .hero,
+      .app-shell:not(.locked) .top-summary,
+      .app-shell:not(.locked) .grid {
+        grid-column: 2;
+      }
+      .app-shell:not(.locked) .tabbar {
+        grid-column: 1;
+        grid-row: 2 / span 3;
+        margin-top: 0;
+      }
+    }
     @media (max-width: 1120px) {
       .grid, .metrics, .row2, .row3, .filters, .hero-shell, .access-shell, .summary-strip, .section-guide { grid-template-columns: 1fr; }
       .settings-grid { grid-template-columns: 1fr; }
@@ -824,11 +973,33 @@
       .hero-config-grid { grid-template-rows: auto; }
       .tabbar { flex-direction: column; }
       .tab-button { width: 100%; }
+      .dashboard-header { flex-direction: column; align-items: stretch; }
+      .dashboard-header .session-profile { justify-content: flex-start; }
     }
   </style>
 </head>
 <body>
   <div class="wrap app-shell locked" id="appShell">
+    <header class="dashboard-header">
+      <div class="dashboard-brand">
+        <div class="brand-mark">A</div>
+        <div class="dashboard-brand-copy">
+          <strong>Aira Control Center</strong>
+          <span>Panel premium para operar tu negocio por WhatsApp</span>
+        </div>
+      </div>
+      <div class="session-profile">
+        <div class="session-avatar" id="headerSessionAvatar">AI</div>
+        <div class="session-meta">
+          <strong id="headerSessionName">Aira</strong>
+          <div class="hint" id="headerBusinessName">Tu negocio</div>
+        </div>
+      </div>
+      <div class="dashboard-actions">
+        <button class="ghost-button" id="headerOpenBusinessSettings" type="button">Configuración</button>
+        <button class="alt" id="headerLogoutButton" type="button">Cerrar sesión</button>
+      </div>
+    </header>
     <section class="hero hero-shell">
       <div class="hero-copy">
         <div class="eyebrow">Aira Control Center</div>
@@ -852,18 +1023,9 @@
       </div>
       <div class="hero-notes">
         <div class="hero-session">
-          <div class="session-bar" id="sessionBar">
-            <div class="session-profile">
-              <div class="session-avatar" id="sessionAvatar">AI</div>
-              <div class="session-meta">
-                <strong id="sessionName">Aira</strong>
-                <div class="hint" id="sessionSubtitle">Panel activo y listo para operar.</div>
-              </div>
-            </div>
-            <div class="session-actions">
-              <button class="ghost-button" id="openBusinessSettings" type="button">Configuración</button>
-              <button class="alt" id="logoutButton" type="button">Cerrar sesión</button>
-            </div>
+          <div class="hero-session-head">
+            <strong>Estado actual de Aira</strong>
+            <div class="hint" id="sessionSubtitle">Panel activo y listo para operar.</div>
           </div>
           <div class="hero-config-grid">
             <div class="hero-config-card">
@@ -1273,13 +1435,16 @@
       const assistantName = (data.assistant_name || document.getElementById("assistant_name")?.value || "Aira").trim() || "Aira";
       const businessName = (data.business_name || document.getElementById("business_name")?.value || "tu negocio").trim() || "tu negocio";
       const avatarUrl = (data.assistant_avatar_url || document.getElementById("assistant_avatar_url")?.value || "").trim() || DEFAULT_AIRA_AVATAR;
-      const avatar = document.getElementById("sessionAvatar");
-      const sessionName = document.getElementById("sessionName");
+      const headerAvatar = document.getElementById("headerSessionAvatar");
+      const headerSessionName = document.getElementById("headerSessionName");
+      const headerBusinessName = document.getElementById("headerBusinessName");
       const sessionSubtitle = document.getElementById("sessionSubtitle");
-      if (sessionName) sessionName.textContent = assistantName;
+      if (headerSessionName) headerSessionName.textContent = assistantName;
+      if (headerBusinessName) headerBusinessName.textContent = businessName;
       if (sessionSubtitle) sessionSubtitle.textContent = `Asistente activa de ${businessName}.`;
-      if (!avatar) return;
-      avatar.innerHTML = `<img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(assistantName)}" />`;
+      [headerAvatar].filter(Boolean).forEach((avatarNode) => {
+        avatarNode.innerHTML = `<img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(assistantName)}" />`;
+      });
     }
     function formatMaskedCode(code) {
       const clean = (code || "").trim();
@@ -1994,12 +2159,13 @@ ${payloadSummary ? payloadSummary : "Sin payload operativo adicional."}</div>
       localStorage.setItem("aira_admin_code", document.getElementById("adminCode").value.trim());
       await loadAll();
     });
-    document.getElementById("logoutButton").addEventListener("click", () => {
+    function handleLogout() {
       localStorage.removeItem("aira_admin_code");
       document.getElementById("adminCode").value = "";
       setAuthenticatedState(false);
       setStatus("authStatus", "Sesión local cerrada.");
-    });
+    }
+    document.getElementById("headerLogoutButton").addEventListener("click", handleLogout);
     document.getElementById("refreshAll").addEventListener("click", async () => {
       try {
         setStatus("authStatus", "Actualizando panel...");
@@ -2086,7 +2252,7 @@ ${payloadSummary ? payloadSummary : "Sin payload operativo adicional."}</div>
       document.getElementById(id).addEventListener("input", () => updateSessionProfile());
       document.getElementById(id).addEventListener("change", () => updateSessionProfile());
     });
-    document.getElementById("openBusinessSettings").addEventListener("click", () => {
+    document.getElementById("headerOpenBusinessSettings").addEventListener("click", () => {
       setActivePanel("negocio");
       document.getElementById("negocioSection").scrollIntoView({ behavior: "smooth", block: "start" });
     });
