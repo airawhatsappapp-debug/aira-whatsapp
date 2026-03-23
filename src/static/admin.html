@@ -67,19 +67,78 @@
     .hero-copy, .hero-notes {
       border: 1px solid var(--line);
       border-radius: 24px;
-      background: linear-gradient(180deg, rgba(8,20,15,0.94) 0%, rgba(12,26,19,0.9) 100%);
       box-shadow: var(--shadow);
     }
     .hero-copy {
       padding: 26px;
       display: grid;
       gap: 14px;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(6, 14, 11, 0.97) 0%, rgba(7, 16, 12, 0.92) 30%, rgba(8, 18, 13, 0.76) 56%, rgba(8, 18, 13, 0.58) 100%),
+        linear-gradient(180deg, rgba(8,20,15,0.82) 0%, rgba(12,26,19,0.56) 100%),
+        url("/static/assets/aira-extra.png") center center / cover no-repeat;
     }
     .hero-notes {
       padding: 20px;
       display: grid;
       gap: 12px;
       align-content: start;
+      background: linear-gradient(180deg, rgba(8,20,15,0.94) 0%, rgba(12,26,19,0.9) 100%);
+    }
+    .hero-session {
+      display: none;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(52, 240, 138, 0.18);
+      background:
+        radial-gradient(circle at top right, rgba(52, 240, 138, 0.16), transparent 26%),
+        linear-gradient(180deg, rgba(11, 24, 18, 0.98) 0%, rgba(9, 18, 14, 0.96) 100%);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+    .hero-copy > * {
+      position: relative;
+      z-index: 1;
+    }
+    .hero-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      width: fit-content;
+      padding: 10px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(52, 240, 138, 0.22);
+      background: rgba(7, 17, 13, 0.72);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24);
+    }
+    .hero-brand-avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(52, 240, 138, 0.28);
+      flex-shrink: 0;
+      background: rgba(10, 21, 16, 0.9);
+    }
+    .hero-brand-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .hero-brand-copy {
+      display: grid;
+      gap: 2px;
+    }
+    .hero-brand-copy strong {
+      color: #f7fff9;
+      font-size: 0.98rem;
+    }
+    .hero-brand-copy span {
+      color: var(--muted);
+      font-size: 0.88rem;
     }
     .note-card {
       padding: 16px;
@@ -141,11 +200,23 @@
         linear-gradient(180deg, rgba(11, 24, 18, 0.98) 0%, rgba(9, 18, 14, 0.96) 100%);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
     }
+    .hero-session .session-bar {
+      display: grid;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      gap: 12px;
+    }
     .session-profile {
       display: flex;
       align-items: center;
       gap: 14px;
       min-width: 0;
+    }
+    .hero-session .session-profile {
+      gap: 12px;
     }
     .session-avatar {
       width: 64px;
@@ -163,6 +234,10 @@
       overflow: hidden;
       flex-shrink: 0;
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    }
+    .hero-session .session-avatar {
+      width: 56px;
+      height: 56px;
     }
     .session-avatar img {
       width: 100%;
@@ -188,6 +263,9 @@
       justify-content: flex-end;
       gap: 10px;
       flex-wrap: wrap;
+    }
+    .hero-session .session-actions {
+      justify-content: flex-start;
     }
     .ghost-button {
       border: 1px solid rgba(52, 240, 138, 0.26);
@@ -257,7 +335,7 @@
       margin-bottom: 18px;
     }
     .app-shell.locked .hero-copy {
-      min-height: 100%;
+      min-height: 430px;
     }
     .app-shell.locked .access-shell {
       max-width: 980px;
@@ -273,19 +351,26 @@
       box-shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
     }
     .app-shell:not(.locked) .hero-notes {
-      display: none;
+      display: grid;
     }
     .app-shell:not(.locked) .hero-copy {
       padding-bottom: 20px;
+      min-height: 300px;
+    }
+    .app-shell.locked .hero-session {
+      display: none;
+    }
+    .app-shell:not(.locked) .hero-session {
+      display: block;
+    }
+    .app-shell:not(.locked) .hero-notes .note-card {
+      display: none;
     }
     .app-shell:not(.locked) .access-grid,
     .app-shell:not(.locked) .section-kicker,
     .app-shell:not(.locked) #accessTitle,
     .app-shell:not(.locked) #accessHint {
       display: none;
-    }
-    .app-shell:not(.locked) .session-bar {
-      display: grid;
     }
     .app-shell:not(.locked) .access-shell {
       grid-template-columns: 1fr;
@@ -621,6 +706,7 @@
       .access-grid { grid-template-columns: 1fr; }
       .session-bar { grid-template-columns: 1fr; }
       .session-actions { justify-content: flex-start; }
+      .hero-session .session-actions { justify-content: flex-start; }
       .tabbar { flex-direction: column; }
       .tab-button { width: 100%; }
     }
@@ -632,6 +718,15 @@
       <div class="hero-copy">
         <div class="eyebrow">Aira Control Center</div>
         <div class="auth-badge" id="authBadge">Sesión iniciada en el panel</div>
+        <div class="hero-brand">
+          <div class="hero-brand-avatar">
+            <img src="/static/assets/aira-avatar-oficial.png" alt="Aira oficial" />
+          </div>
+          <div class="hero-brand-copy">
+            <strong>Aira oficial</strong>
+            <span>WhatsApp, automatización y operación para tu negocio.</span>
+          </div>
+        </div>
         <h1>Administra tu negocio sin complicarte</h1>
         <div class="sub">Configura tu asistente, revisa pedidos y actualiza tu catálogo desde un panel pensado para socios no técnicos. La idea es que entiendas rápido qué hacer, sin sentir que estás tocando un sistema complicado.</div>
         <div class="pill-grid">
@@ -641,6 +736,21 @@
         </div>
       </div>
       <div class="hero-notes">
+        <div class="hero-session">
+          <div class="session-bar" id="sessionBar">
+            <div class="session-profile">
+              <div class="session-avatar" id="sessionAvatar">AI</div>
+              <div class="session-meta">
+                <strong id="sessionName">Aira</strong>
+                <div class="hint" id="sessionSubtitle">Panel activo y listo para operar.</div>
+              </div>
+            </div>
+            <div class="session-actions">
+              <button class="ghost-button" id="openBusinessSettings" type="button">Configuración</button>
+              <button class="alt" id="logoutButton" type="button">Cerrar sesión</button>
+            </div>
+          </div>
+        </div>
         <div class="note-card">
           <strong>1. Entra con tu código</strong>
           <div class="hint">Tu sesión local se guarda en este navegador para que no tengas que escribirlo una y otra vez.</div>
@@ -662,19 +772,6 @@
           <div class="section-kicker">Acceso</div>
           <h2 style="margin-bottom: 8px;" id="accessTitle">Inicia sesión para entrar al panel</h2>
           <div class="hint" id="accessHint">Usa tu código de acceso para cargar pedidos, negocio y menú. Si cambias el código del negocio, este panel lo recordará al guardar.</div>
-        </div>
-        <div class="session-bar" id="sessionBar">
-          <div class="session-profile">
-            <div class="session-avatar" id="sessionAvatar">AI</div>
-            <div class="session-meta">
-              <strong id="sessionName">Aira</strong>
-              <div class="hint" id="sessionSubtitle">Panel activo y listo para operar.</div>
-            </div>
-          </div>
-          <div class="session-actions">
-            <button class="ghost-button" id="openBusinessSettings" type="button">Configuración</button>
-            <button class="alt" id="logoutButton" type="button">Cerrar sesión</button>
-          </div>
         </div>
         <div class="access-grid">
           <label>Código de acceso
@@ -935,6 +1032,7 @@
   </div>
 
   <script>
+    const DEFAULT_AIRA_AVATAR = "/static/assets/aira-avatar-oficial.png";
     let currentOrders = [];
     let refreshTimer = null;
     let menuState = [];
@@ -976,18 +1074,14 @@
     function updateSessionProfile(data = {}) {
       const assistantName = (data.assistant_name || document.getElementById("assistant_name")?.value || "Aira").trim() || "Aira";
       const businessName = (data.business_name || document.getElementById("business_name")?.value || "tu negocio").trim() || "tu negocio";
-      const avatarUrl = (data.assistant_avatar_url || document.getElementById("assistant_avatar_url")?.value || "").trim();
+      const avatarUrl = (data.assistant_avatar_url || document.getElementById("assistant_avatar_url")?.value || "").trim() || DEFAULT_AIRA_AVATAR;
       const avatar = document.getElementById("sessionAvatar");
       const sessionName = document.getElementById("sessionName");
       const sessionSubtitle = document.getElementById("sessionSubtitle");
       if (sessionName) sessionName.textContent = assistantName;
       if (sessionSubtitle) sessionSubtitle.textContent = `Asistente activa de ${businessName}.`;
       if (!avatar) return;
-      if (avatarUrl) {
-        avatar.innerHTML = `<img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(assistantName)}" />`;
-      } else {
-        avatar.textContent = buildAssistantInitials(assistantName);
-      }
+      avatar.innerHTML = `<img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(assistantName)}" />`;
     }
     function setAuthenticatedState(isAuthenticated) {
       const shell = document.getElementById("appShell");
