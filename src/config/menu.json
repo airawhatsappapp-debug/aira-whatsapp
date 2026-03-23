@@ -1,0 +1,43 @@
+{
+  "categories": [
+    {
+      "name": "Hamburguesas",
+      "items": [
+        {
+          "name": "Hamburguesa Clasica",
+          "price": 18.0
+        },
+        {
+          "name": "Hamburguesa Doble",
+          "price": 24.0
+        },
+        {
+          "name": "Hamburguesa BBQ",
+          "price": 22.0
+        }
+      ]
+    },
+    {
+      "name": "Acompanamientos",
+      "items": [
+        {
+          "name": "Papas fritas",
+          "price": 8.0
+        }
+      ]
+    },
+    {
+      "name": "Bebidas",
+      "items": [
+        {
+          "name": "Gaseosa personal",
+          "price": 5.0
+        },
+        {
+          "name": "Agua",
+          "price": 3.5
+        }
+      ]
+    }
+  ]
+}

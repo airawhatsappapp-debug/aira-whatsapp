@@ -1,0 +1,32 @@
+{
+  "categories": {
+    "greeting_slang": {
+      "patterns": ["oe", "oee", "holaa", "buenas pe", "buenas causa", "que fue", "qlq"],
+      "response": "Estoy aqui para ayudarte con el menu, pedidos y consultas del negocio."
+    },
+    "informal_menu_request": {
+      "patterns": ["manda menu", "manda carta", "pasa menu", "menu pe", "carta pe", "manda menu pe"],
+      "response": "Claro, te comparto el menu rapido para que elijas mejor."
+    },
+    "photo_request": {
+      "patterns": ["manda foto", "manda fotos", "foto pe", "fotos pe", "manda foto p", "fotos del local", "foto del producto"],
+      "response": "Puedo ayudarte con informacion de productos, menu y ubicacion del negocio. Si deseas, te muestro el menu y te ayudo a elegir."
+    },
+    "flirty_redirect": {
+      "patterns": ["bb", "bebita", "mamacita", "estas solita", "manda foto tuya", "preciosa", "guapa", "hermosa", "mi amor", "bebecita", "reina"],
+      "response": "Estoy para ayudarte con pedidos y consultas del negocio. Si deseas, con gusto te atiendo con el menu o tu pedido."
+    },
+    "abusive_soft": {
+      "patterns": ["apurate", "apura", "rapido pe", "no seas lenta", "callate", "hazlo rapido"],
+      "response": "Estoy para ayudarte de la forma mas rapida posible. Dime tu pedido o consulta y lo registro de inmediato."
+    },
+    "abusive_hard": {
+      "patterns": ["idiota", "imbecil", "cojuda", "cojudo", "mierda", "carajo", "porqueria", "hija de puta", "hijo de puta", "webon", "huevon", "tonta", "tonta de mierda"],
+      "response": "Puedo ayudarte con tu pedido o consulta, pero necesito que mantengamos una conversacion respetuosa."
+    },
+    "sexual_content": {
+      "patterns": ["cosas calientes", "sexy", "desnud", "nudes", "pack", "riko", "rica", "amor", "sexo", "kachar", "cachar", "tirar", "arrecho", "caliente", "morbo"],
+      "response": "No puedo ayudar con eso. Si deseas informacion del negocio o hacer un pedido, con gusto te ayudo."
+    }
+  }
+}

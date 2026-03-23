@@ -1,0 +1,51 @@
+{
+  "business_name": "Aira Food",
+  "assistant_name": "Aira",
+  "admin_access_code": "aira123",
+  "pickup_eta_minutes": 20,
+  "delivery_eta_minutes": 45,
+  "currency": "PEN",
+  "greeting": "Hola, soy Aira. Estoy aqui para ayudarte con tu pedido.",
+  "pickup_label": "Recojo en local",
+  "delivery_label": "Delivery",
+  "business_hours": "Lunes a domingo de 12:00 PM a 10:00 PM",
+  "business_address": "Av. Principal 123, Cercado de Lima",
+  "delivery_zones": [
+    "Cercado de Lima",
+    "Lince",
+    "Jesus Maria",
+    "Pueblo Libre",
+    "Magdalena"
+  ],
+  "default_delivery_fee": 5.0,
+  "delivery_zone_fees": {
+    "Cercado de Lima": 5.0,
+    "Lince": 6.0,
+    "Jesus Maria": 6.0,
+    "Pueblo Libre": 7.0,
+    "Magdalena": 7.0
+  },
+  "payment_methods": [
+    "Efectivo",
+    "Yape",
+    "Transferencia"
+  ],
+  "payment_details": {
+    "yape": "Yape disponible al 999 999 999",
+    "transferencia": "Transferencia disponible a nombre de Aira Food"
+  },
+  "cross_sell_rules": [
+    {
+      "trigger_category": "Hamburguesas",
+      "suggested_item": "Gaseosa personal",
+      "message": "Si quieres, tambien puedo agregarte una Gaseosa personal para completar tu pedido."
+    },
+    {
+      "trigger_category": "Hamburguesas",
+      "suggested_item": "Papas fritas",
+      "message": "Si quieres, tambien puedo sumarte unas Papas fritas para acompanar tu pedido."
+    }
+  ],
+  "confirmation_message": "Perfecto, tu pedido ya fue registrado.",
+  "fallback_message": "Puedo ayudarte a hacer un pedido. Escribe que deseas comer y yo te guio."
+}

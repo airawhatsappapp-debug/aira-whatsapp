@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aira Admin</title>
+  <style>
+    :root {
+      --ink: #1c241f;
+      --muted: #687268;
+      --accent: #1f6d52;
+      --warm: #cf6a2a;
+      --danger: #b54824;
+      --line: #e5d7c8;
+      --card: rgba(255, 250, 242, 0.96);
+      --shadow: 0 16px 40px rgba(39, 28, 16, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, #f6ecdf 0%, #efe3d2 100%);
+    }
+    .wrap { width: min(1260px, 92vw); margin: 34px auto 60px; }
+    .hero { display: grid; gap: 10px; margin-bottom: 22px; }
+    h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.8rem); line-height: 0.98; }
+    .sub { max-width: 840px; color: var(--muted); font-size: 1rem; }
+    .bar, .card {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+    .bar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+    }
+    .grid { display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 22px; }
+    .grid.single-panel { grid-template-columns: 1fr; }
+    .stack { display: grid; gap: 18px; }
+    .card { padding: 22px; }
+    .card h2 { margin: 0 0 14px; font-size: 1.28rem; }
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .card-head h2 { margin: 0; }
+    .card-head .hint { max-width: 620px; }
+    .stack-sm { display: grid; gap: 12px; }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .row3 { display: grid; grid-template-columns: 1.4fr 0.7fr 0.7fr; gap: 10px; align-items: end; }
+    label { display: grid; gap: 6px; font-size: 0.92rem; color: var(--muted); }
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font: inherit;
+      color: var(--ink);
+      background: #fff;
+    }
+    textarea { min-height: 110px; resize: vertical; }
+    button {
+      border: 0;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      padding: 11px 17px;
+      font: inherit;
+      cursor: pointer;
+    }
+    button.alt { background: var(--warm); }
+    button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--line); }
+    button.danger { background: var(--danger); }
+    button.small { padding: 8px 12px; font-size: 0.88rem; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .status { min-height: 22px; color: var(--muted); font-size: 0.92rem; }
+    .hint { color: var(--muted); font-size: 0.88rem; }
+    .tabbar {
+      padding: 8px;
+      gap: 8px;
+      align-items: stretch;
+      position: sticky;
+      top: 14px;
+      z-index: 12;
+      backdrop-filter: blur(10px);
+    }
+    .tab-button, .tab-link {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid transparent;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      text-align: center;
+    }
+    .tab-button.active, .tab-link:hover, .tab-link.active {
+      background: #fff;
+      color: var(--accent);
+      border-color: var(--line);
+      box-shadow: inset 0 0 0 1px rgba(31,109,82,0.06);
+    }
+    .section-anchor {
+      scroll-margin-top: 24px;
+    }
+    .section-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-bottom: 10px;
+    }
+    .panel-section {
+      display: none;
+      margin-bottom: 22px;
+    }
+    .panel-section.active {
+      display: block;
+    }
+    .hidden-section {
+      display: none !important;
+    }
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0; }
+    .metric { padding: 14px; border-radius: 16px; border: 1px solid var(--line); background: #fff; }
+    .metric strong { display: block; margin-top: 8px; font-size: 1.35rem; }
+    .status-summary { color: var(--muted); font-size: 0.9rem; margin-bottom: 12px; }
+    .filters { display: grid; grid-template-columns: 1fr 220px; gap: 10px; margin: 12px 0 16px; }
+    .orders { display: grid; gap: 12px; max-height: 780px; overflow: auto; padding-right: 4px; }
+    .order, .builder-category, .builder-item {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+    }
+    .order { padding: 16px; }
+    .order-top, .builder-category-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .chip {
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 999px; padding: 6px 10px; font-size: 0.8rem;
+      border: 1px solid var(--line); background: #f8f0e6;
+    }
+    .chip.soft { background: #f2eee8; }
+    .chip.strong { background: #e0efe7; color: #164734; }
+    .chip.warn { background: #fff1dd; color: #8b4c14; }
+    .chip.nuevo { background: #fff4d9; }
+    .chip.preparando { background: #dff2ea; }
+    .chip.en-camino { background: #e6efff; }
+    .chip.entregado { background: #e2f4e1; }
+    .chip.cancelado { background: #fde7de; }
+    .meta { color: var(--muted); font-size: 0.93rem; white-space: pre-line; line-height: 1.5; }
+    .micro-chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 10px; }
+    .order-actions, .builder-items { display: grid; gap: 10px; }
+    .memory-box {
+      margin-top: 12px;
+      padding: 14px;
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      background: #fcf8f2;
+      display: grid;
+      gap: 10px;
+    }
+    .memory-title {
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .memory-meta {
+      color: var(--muted);
+      font-size: 0.9rem;
+      white-space: pre-line;
+      line-height: 1.5;
+    }
+    .memory-log {
+      display: grid;
+      gap: 8px;
+      max-height: 240px;
+      overflow: auto;
+    }
+    .memory-msg {
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      white-space: pre-line;
+      line-height: 1.45;
+      font-size: 0.92rem;
+    }
+    .memory-msg strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--ink);
+    }
+    .timeline-box {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 10px;
+    }
+    .timeline-item {
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    .timeline-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+    .customer-summary-box {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 10px;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .summary-pill {
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    .builder { display: grid; gap: 14px; margin-top: 8px; }
+    .builder-category { padding: 14px; }
+    .builder-item { padding: 10px; }
+    .empty {
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px dashed var(--line);
+      color: var(--muted);
+      background: rgba(255,255,255,0.55);
+      text-align: center;
+    }
+    details { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+    summary { cursor: pointer; color: var(--accent); font-weight: 600; margin-bottom: 10px; }
+    code { background: rgba(31,109,82,0.08); padding: 2px 6px; border-radius: 8px; }
+    @media (max-width: 1120px) {
+      .grid, .metrics, .row2, .row3, .filters { grid-template-columns: 1fr; }
+      .tabbar { flex-direction: column; }
+      .tab-button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Aira Admin</h1>
+      <div class="sub">Panel simple para revisar pedidos, ajustar tu negocio y actualizar tus productos sin tocar nada técnico.</div>
+    </section>
+
+    <div class="bar">
+      <label style="min-width: 280px;">Código de acceso
+        <input id="adminCode" type="password" placeholder="Ingresa tu código" />
+      </label>
+      <button id="loginButton" type="button">Entrar</button>
+      <button class="alt" id="logoutButton" type="button">Salir</button>
+      <div class="status" id="authStatus"></div>
+    </div>
+
+    <div class="bar">
+      <div class="status">
+        <strong>Panel:</strong> pedidos + negocio + menú |
+        <strong>Auto refresh:</strong> cada 30 segundos |
+        <span id="lastRefresh"><strong>Última actualización:</strong> pendiente</span>
+      </div>
+      <div class="actions">
+        <button class="ghost" id="refreshAll" type="button">Actualizar todo</button>
+      </div>
+    </div>
+
+    <div class="bar tabbar">
+      <button class="tab-link active" type="button" data-panel="pedidos">1. Pedidos</button>
+      <button class="tab-link" type="button" data-panel="negocio">2. Negocio</button>
+      <button class="tab-link" type="button" data-panel="menu">3. Menu</button>
+    </div>
+
+    <div class="grid">
+      <section class="stack" id="stackSection">
+        <div class="card section-anchor" id="negocioSection">
+          <div class="card-head">
+            <div>
+              <div class="section-kicker">Paso 2</div>
+              <h2>Negocio</h2>
+              <div class="hint">Configura tiempos, pagos, delivery y sugerencias del negocio.</div>
+            </div>
+          </div>
+          <div class="stack-sm">
+            <div class="row2">
+              <label>Nombre del negocio<input id="business_name" /></label>
+              <label>Nombre de la asistente<input id="assistant_name" /></label>
+            </div>
+            <div class="row2">
+              <label>Código de acceso<input id="admin_access_code" /></label>
+              <label>Delivery base<input id="default_delivery_fee" type="number" step="0.01" /></label>
+            </div>
+            <label>Saludo inicial<textarea id="greeting"></textarea></label>
+            <div class="row2">
+              <label>Horario de atención<input id="business_hours" /></label>
+              <label>Dirección del local<input id="business_address" /></label>
+            </div>
+            <div class="row2">
+              <label>Tiempo estimado para recojo (min)<input id="pickup_eta_minutes" type="number" min="0" step="1" /></label>
+              <label>Tiempo estimado para delivery (min)<input id="delivery_eta_minutes" type="number" min="0" step="1" /></label>
+            </div>
+            <div class="row2">
+              <label>Métodos de pago<input id="payment_methods" placeholder="Efectivo, Yape, Transferencia" /></label>
+              <div></div>
+            </div>
+            <div class="row2">
+              <label>Detalle Yape<input id="yape_details" /></label>
+              <label>Detalle Transferencia<input id="transfer_details" /></label>
+            </div>
+            <label>Zonas de delivery<textarea id="delivery_zones" placeholder="Una por línea"></textarea></label>
+            <label>Tarifas por zona<textarea id="delivery_zone_fees" placeholder="Lince=6&#10;Magdalena=7"></textarea></label>
+            <div class="hint">Usa una línea por zona con formato <code>Zona=Tarifa</code>.</div>
+            <label>Sugerencias de venta<textarea id="cross_sell_rules" placeholder="Hamburguesas=>Gaseosa personal=>Si quieres, tambien puedo agregarte una Gaseosa personal para completar tu pedido."></textarea></label>
+            <div class="hint">Usa <code>Categoria=>Producto sugerido=>Mensaje opcional</code> para sugerir extras automáticamente.</div>
+            <div class="actions"><button id="saveBusiness" type="button">Guardar negocio</button></div>
+            <div class="status" id="businessStatus"></div>
+          </div>
+        </div>
+
+        <div class="card section-anchor" id="menuSection">
+          <div class="card-head">
+            <div>
+              <div class="section-kicker">Paso 3</div>
+              <h2>Menú</h2>
+              <div class="hint">Carga categorías y productos desde el editor visual. El JSON queda como opción avanzada.</div>
+            </div>
+          </div>
+          <div class="hint">Este bloque es para cargar lo que verá el cliente en WhatsApp.</div>
+          <div class="builder section-anchor" id="menuBuilder"></div>
+          <div class="actions">
+            <button class="ghost" id="addCategory" type="button">Agregar categoría</button>
+            <button id="saveMenuVisual" type="button">Guardar menú visual</button>
+          </div>
+          <details>
+            <summary>Modo avanzado: JSON del menú</summary>
+            <label>Menú en JSON<textarea id="menuJson" style="min-height: 280px;"></textarea></label>
+            <div class="hint">Si editas JSON manualmente, pulsa “Cargar JSON al editor” antes de guardar.</div>
+            <div class="actions">
+              <button class="ghost" id="formatMenu" type="button">Formatear JSON</button>
+              <button class="ghost" id="syncJsonToBuilder" type="button">Cargar JSON al editor</button>
+              <button id="saveMenuJson" type="button">Guardar JSON</button>
+            </div>
+          </details>
+          <div class="status" id="menuStatus"></div>
+        </div>
+      </section>
+
+      <section class="card section-anchor" id="pedidosSection">
+        <div class="card-head">
+          <div>
+            <div class="section-kicker">Paso 1</div>
+            <h2>Pedidos</h2>
+            <div class="hint">Aquí cambias estados, revisas clientes y ves el contexto operativo de cada pedido.</div>
+          </div>
+        </div>
+        <div class="actions"><button id="refreshOrders" type="button">Actualizar pedidos</button></div>
+        <div class="metrics">
+          <div class="metric"><div>Total pedidos</div><strong id="metricTotalOrders">0</strong></div>
+          <div class="metric"><div>Ventas acumuladas</div><strong id="metricRevenue">S/ 0.00</strong></div>
+          <div class="metric"><div>Pendientes operativos</div><strong id="metricPending">0</strong></div>
+          <div class="metric"><div>Entregados</div><strong id="metricDelivered">0</strong></div>
+        </div>
+        <div class="status-summary" id="metricStatuses">Sin datos todavía.</div>
+        <div class="filters">
+          <input id="orderSearch" placeholder="Buscar por número, cliente, teléfono o detalle" />
+          <select id="orderStatusFilter">
+            <option value="">Todos los estados</option>
+            <option value="nuevo">Nuevo</option>
+            <option value="preparando">Preparando</option>
+            <option value="en camino">En camino</option>
+            <option value="entregado">Entregado</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+        </div>
+        <div class="orders" id="orders"></div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    let currentOrders = [];
+    let refreshTimer = null;
+    let menuState = [];
+    let activePanel = localStorage.getItem("aira_admin_panel") || "pedidos";
+
+    function getAdminCode() { return localStorage.getItem("aira_admin_code") || ""; }
+    function authHeaders() {
+      const code = getAdminCode();
+      return code ? { "x-admin-code": code } : {};
+    }
+    async function getJson(url) {
+      const response = await fetch(url, { headers: authHeaders() });
+      if (!response.ok) throw new Error(`Error ${response.status}`);
+      return response.json();
+    }
+    async function sendJson(url, method, body) {
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json", ...authHeaders() },
+        body: JSON.stringify(body),
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || `Error ${response.status}`);
+      }
+      return response.json();
+    }
+    function setStatus(id, message, isError = false) {
+      const node = document.getElementById(id);
+      node.textContent = message;
+      node.style.color = isError ? "#b54824" : "#687268";
+    }
+    function setActivePanel(panel) {
+      activePanel = panel;
+      localStorage.setItem("aira_admin_panel", panel);
+      const grid = document.querySelector(".grid");
+      const stack = document.getElementById("stackSection");
+      const pedidos = document.getElementById("pedidosSection");
+      const negocio = document.getElementById("negocioSection");
+      const menu = document.getElementById("menuSection");
+      document.querySelectorAll(".tab-link[data-panel]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.panel === panel);
+      });
+      grid.classList.add("single-panel");
+      stack.classList.remove("hidden-section");
+      pedidos.classList.remove("hidden-section");
+      negocio.classList.remove("hidden-section");
+      menu.classList.remove("hidden-section");
+      if (panel === "pedidos") {
+        stack.classList.add("hidden-section");
+      } else if (panel === "negocio") {
+        pedidos.classList.add("hidden-section");
+        menu.classList.add("hidden-section");
+      } else if (panel === "menu") {
+        pedidos.classList.add("hidden-section");
+        negocio.classList.add("hidden-section");
+      }
+    }
+    function updateLastRefreshLabel() {
+      document.getElementById("lastRefresh").innerHTML =
+        `<strong>Última actualización:</strong> ${new Date().toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}`;
+    }
+    function businessToForm(data) {
+      document.getElementById("business_name").value = data.business_name || "";
+      document.getElementById("assistant_name").value = data.assistant_name || "";
+      document.getElementById("admin_access_code").value = data.admin_access_code || "";
+      document.getElementById("greeting").value = data.greeting || "";
+      document.getElementById("business_hours").value = data.business_hours || "";
+      document.getElementById("business_address").value = data.business_address || "";
+      document.getElementById("default_delivery_fee").value = data.default_delivery_fee ?? 0;
+      document.getElementById("pickup_eta_minutes").value = data.pickup_eta_minutes ?? 20;
+      document.getElementById("delivery_eta_minutes").value = data.delivery_eta_minutes ?? 45;
+      document.getElementById("payment_methods").value = (data.payment_methods || []).join(", ");
+      document.getElementById("yape_details").value = data.yape_details || "";
+      document.getElementById("transfer_details").value = data.transfer_details || "";
+      document.getElementById("delivery_zones").value = (data.delivery_zones || []).join("\n");
+      document.getElementById("delivery_zone_fees").value = (data.delivery_zone_fees || []).map((item) => `${item.zone}=${item.fee}`).join("\n");
+      document.getElementById("cross_sell_rules").value = (data.cross_sell_rules || []).map((rule) => {
+        const message = rule.message ? `=>${rule.message}` : "";
+        return `${rule.trigger_category}=>${rule.suggested_item}${message}`;
+      }).join("\n");
+    }
+    function formToBusiness() {
+      return {
+        business_name: document.getElementById("business_name").value.trim(),
+        assistant_name: document.getElementById("assistant_name").value.trim(),
+        admin_access_code: document.getElementById("admin_access_code").value.trim(),
+        greeting: document.getElementById("greeting").value.trim(),
+        business_hours: document.getElementById("business_hours").value.trim(),
+        business_address: document.getElementById("business_address").value.trim(),
+        default_delivery_fee: Number(document.getElementById("default_delivery_fee").value || 0),
+        pickup_eta_minutes: Number(document.getElementById("pickup_eta_minutes").value || 20),
+        delivery_eta_minutes: Number(document.getElementById("delivery_eta_minutes").value || 45),
+        delivery_zones: document.getElementById("delivery_zones").value.split("\n").map((v) => v.trim()).filter(Boolean),
+        payment_methods: document.getElementById("payment_methods").value.split(",").map((v) => v.trim()).filter(Boolean),
+        yape_details: document.getElementById("yape_details").value.trim(),
+        transfer_details: document.getElementById("transfer_details").value.trim(),
+        delivery_zone_fees: document.getElementById("delivery_zone_fees").value.split("\n").map((line) => line.trim()).filter(Boolean).map((line) => {
+          const [zone, fee] = line.split("=");
+          return { zone: (zone || "").trim(), fee: Number((fee || "").trim()) };
+        }),
+        cross_sell_rules: document.getElementById("cross_sell_rules").value.split("\n").map((line) => line.trim()).filter(Boolean).map((line) => {
+          const [trigger_category, suggested_item, ...messageParts] = line.split("=>");
+          return {
+            trigger_category: (trigger_category || "").trim(),
+            suggested_item: (suggested_item || "").trim(),
+            message: messageParts.join("=>").trim(),
+          };
+        }),
+      };
+    }
+    function formatMoney(value) { return `S/ ${Number(value || 0).toFixed(2)}`; }
+    function chipClass(status) {
+      const normalized = (status || "").toLowerCase();
+      if (normalized === "en camino") return "chip en-camino";
+      return `chip ${normalized}`.trim();
+    }
+    function normalizeMenuStateFromApi(data) {
+      return (data.categories || []).map((category) => ({
+        name: category.name || "",
+        items: (category.items || []).map((item) => ({
+          name: item.name || "",
+          price: Number(item.price || 0),
+          is_active: item.is_active !== false,
+        })),
+      }));
+    }
+    function serializeMenuPayload() {
+      return {
+        categories: menuState.map((category) => ({
+          name: category.name.trim(),
+          items: category.items.map((item) => ({
+            name: item.name.trim(),
+            price: Number(item.price || 0),
+            is_active: item.is_active !== false,
+          })),
+        })),
+      };
+    }
+    function validateMenuState() {
+      if (!menuState.length) throw new Error("Agrega al menos una categoría.");
+      const categoryNames = new Set();
+      menuState.forEach((category, categoryIndex) => {
+        const categoryName = category.name.trim();
+        if (!categoryName) throw new Error(`La categoría ${categoryIndex + 1} no tiene nombre.`);
+        const normalizedCategory = categoryName.toLowerCase();
+        if (categoryNames.has(normalizedCategory)) throw new Error(`La categoría '${categoryName}' está duplicada.`);
+        categoryNames.add(normalizedCategory);
+        if (!category.items.length) throw new Error(`La categoría '${categoryName}' debe tener al menos un producto.`);
+        const itemNames = new Set();
+        category.items.forEach((item, itemIndex) => {
+          const itemName = item.name.trim();
+          if (!itemName) throw new Error(`El producto ${itemIndex + 1} en '${categoryName}' no tiene nombre.`);
+          if (Number(item.price) < 0) throw new Error(`El producto '${itemName}' no puede tener precio negativo.`);
+          const normalizedItem = itemName.toLowerCase();
+          if (itemNames.has(normalizedItem)) throw new Error(`El producto '${itemName}' está repetido en '${categoryName}'.`);
+          itemNames.add(normalizedItem);
+        });
+      });
+    }
+    function syncJsonFromState() {
+      document.getElementById("menuJson").value = JSON.stringify(serializeMenuPayload(), null, 2);
+    }
+    function syncStateFromJson() {
+      const parsed = JSON.parse(document.getElementById("menuJson").value);
+      menuState = normalizeMenuStateFromApi(parsed);
+      renderMenuBuilder();
+      syncJsonFromState();
+    }
+    function escapeHtml(value) {
+      return String(value || "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+    }
+    function renderMenuBuilder() {
+      const builder = document.getElementById("menuBuilder");
+      builder.innerHTML = "";
+      if (!menuState.length) {
+        builder.innerHTML = '<div class="empty">Aún no hay categorías. Usa “Agregar categoría” para empezar.</div>';
+        return;
+      }
+      menuState.forEach((category, categoryIndex) => {
+        const categoryNode = document.createElement("div");
+        categoryNode.className = "builder-category";
+        const itemsHtml = category.items.map((item, itemIndex) => `
+          <div class="builder-item">
+            <div class="row3">
+              <label>Producto<input type="text" value="${escapeHtml(item.name)}" data-type="item-name" data-category-index="${categoryIndex}" data-item-index="${itemIndex}" /></label>
+              <label>Precio<input type="number" step="0.01" value="${Number(item.price || 0)}" data-type="item-price" data-category-index="${categoryIndex}" data-item-index="${itemIndex}" /></label>
+              <label>Activo
+                <select data-type="item-active" data-category-index="${categoryIndex}" data-item-index="${itemIndex}">
+                  <option value="true" ${item.is_active !== false ? "selected" : ""}>Sí</option>
+                  <option value="false" ${item.is_active === false ? "selected" : ""}>No</option>
+                </select>
+              </label>
+            </div>
+            <div class="actions" style="margin-top: 10px;">
+              <button class="danger small" type="button" data-type="remove-item" data-category-index="${categoryIndex}" data-item-index="${itemIndex}">Quitar producto</button>
+            </div>
+          </div>
+        `).join("");
+        categoryNode.innerHTML = `
+          <div class="builder-category-head">
+            <label style="flex: 1;">Nombre de categoría<input type="text" value="${escapeHtml(category.name)}" data-type="category-name" data-category-index="${categoryIndex}" /></label>
+            <div class="actions">
+              <button class="ghost small" type="button" data-type="add-item" data-category-index="${categoryIndex}">Agregar producto</button>
+              <button class="danger small" type="button" data-type="remove-category" data-category-index="${categoryIndex}">Quitar categoría</button>
+            </div>
+          </div>
+          <div class="builder-items">${itemsHtml}</div>
+        `;
+        builder.appendChild(categoryNode);
+      });
+      builder.querySelectorAll("[data-type]").forEach((node) => {
+        node.addEventListener("click", handleBuilderClick);
+        node.addEventListener("input", handleBuilderInput);
+        node.addEventListener("change", handleBuilderInput);
+      });
+    }
+    function handleBuilderClick(event) {
+      const type = event.currentTarget.dataset.type;
+      const categoryIndex = Number(event.currentTarget.dataset.categoryIndex);
+      const itemIndex = Number(event.currentTarget.dataset.itemIndex);
+      if (type === "add-item") menuState[categoryIndex].items.push({ name: "", price: 0, is_active: true });
+      else if (type === "remove-category") menuState.splice(categoryIndex, 1);
+      else if (type === "remove-item") menuState[categoryIndex].items.splice(itemIndex, 1);
+      else return;
+      renderMenuBuilder();
+      syncJsonFromState();
+    }
+    function handleBuilderInput(event) {
+      const type = event.currentTarget.dataset.type;
+      const categoryIndex = Number(event.currentTarget.dataset.categoryIndex);
+      const itemIndex = Number(event.currentTarget.dataset.itemIndex);
+      const value = event.currentTarget.value;
+      if (type === "category-name") menuState[categoryIndex].name = value;
+      else if (type === "item-name") menuState[categoryIndex].items[itemIndex].name = value;
+      else if (type === "item-price") menuState[categoryIndex].items[itemIndex].price = Number(value || 0);
+      else if (type === "item-active") menuState[categoryIndex].items[itemIndex].is_active = value === "true";
+      else return;
+      syncJsonFromState();
+    }
+    function addCategory() {
+      menuState.push({ name: "", items: [{ name: "", price: 0, is_active: true }] });
+      renderMenuBuilder();
+      syncJsonFromState();
+    }
+    function renderOrders(orders) {
+      const container = document.getElementById("orders");
+      container.innerHTML = "";
+      if (!orders.length) {
+        container.innerHTML = '<div class="empty">No hay pedidos que coincidan con el filtro actual.</div>';
+        return;
+      }
+      orders.forEach((order) => {
+        const card = document.createElement("div");
+        card.className = "order";
+        const customerOrderCount = Number(order.customer_total_orders || 0);
+        const quickChips = [];
+        if (customerOrderCount > 1) quickChips.push(`<span class="chip strong">Recurrente · ${customerOrderCount} pedidos</span>`);
+        else quickChips.push('<span class="chip soft">Cliente nuevo</span>');
+        if (order.customer_note) quickChips.push('<span class="chip warn">Tiene nota de cliente</span>');
+        if ((order.status || "").toLowerCase() === "nuevo") quickChips.push('<span class="chip nuevo">Atencion pendiente</span>');
+        card.innerHTML = `
+          <div class="order-top">
+            <strong>${order.order_number}</strong>
+            <span class="${chipClass(order.status)}">${order.status}</span>
+          </div>
+          <div class="micro-chips">${quickChips.join("")}</div>
+          <div class="meta">
+Cliente: ${order.customer_name}
+Historial cliente: ${customerOrderCount} pedido(s)
+Nota cliente: ${order.customer_note || "Sin nota de cliente"}
+Teléfono: ${order.customer_phone}
+Pedido: ${order.order_detail}
+Entrega: ${order.order_type}
+Dirección: ${order.address || "No aplica"}
+Referencia: ${order.reference_text || "Sin referencia"}
+Zona: ${order.delivery_zone || "Sin zona"}
+Pago: ${order.payment_method || "No definido"}
+Subtotal: ${order.subtotal != null ? formatMoney(order.subtotal) : "Sin subtotal"}
+Delivery: ${order.delivery_fee != null ? formatMoney(order.delivery_fee) : "Sin delivery"}
+Total: ${order.total != null ? formatMoney(order.total) : "Sin total"}
+Nota interna: ${order.internal_note || "Sin nota"}
+Fecha: ${order.created_at}
+          </div>
+          <label style="margin-top: 12px;">Nota interna
+            <textarea id="note-${order.order_number}" style="min-height: 90px;">${escapeHtml(order.internal_note || "")}</textarea>
+          </label>
+          <div class="actions" style="margin-top: 12px;">
+            <button class="ghost" data-memory="${order.order_number}" type="button">Ver contexto</button>
+            <button class="ghost" data-save-note="${order.order_number}" type="button">Guardar nota</button>
+            <button data-order="${order.order_number}" data-status="preparando" type="button">Preparando</button>
+            <button data-order="${order.order_number}" data-status="en camino" type="button">En camino</button>
+            <button data-order="${order.order_number}" data-status="entregado" type="button">Entregado</button>
+            <button class="danger" data-order="${order.order_number}" data-status="cancelado" type="button">Cancelar</button>
+          </div>
+          <div class="memory-slot" id="memory-${order.order_number}"></div>
+        `;
+        card.querySelectorAll("button[data-memory]").forEach((button) => {
+          button.addEventListener("click", async () => {
+            const slot = document.getElementById(`memory-${button.dataset.memory}`);
+            const isOpen = slot.dataset.open === "true";
+            if (isOpen) {
+              slot.innerHTML = "";
+              slot.dataset.open = "false";
+              button.textContent = "Ver contexto";
+              return;
+            }
+            try {
+              button.disabled = true;
+              button.textContent = "Cargando...";
+              const memory = await getJson(`/orders/${button.dataset.memory}/memory`);
+              renderMemory(slot, memory);
+              slot.dataset.open = "true";
+              button.textContent = "Ocultar contexto";
+            } catch (error) {
+              slot.innerHTML = `<div class="memory-box"><div class="memory-title">No se pudo cargar el contexto</div><div class="memory-meta">${escapeHtml(error.message)}</div></div>`;
+              slot.dataset.open = "false";
+              button.textContent = "Ver contexto";
+            } finally {
+              button.disabled = false;
+            }
+          });
+        });
+        card.querySelectorAll("button[data-save-note]").forEach((button) => {
+          button.addEventListener("click", async () => {
+            const noteField = document.getElementById(`note-${button.dataset.saveNote}`);
+            try {
+              button.disabled = true;
+              button.textContent = "Guardando...";
+              await sendJson(`/orders/${button.dataset.saveNote}/note`, "PUT", { note: noteField.value });
+              setStatus("authStatus", `Nota guardada en ${button.dataset.saveNote}.`);
+              await loadOrders();
+            } catch (error) {
+              setStatus("authStatus", `No se pudo guardar la nota: ${error.message}`, true);
+            } finally {
+              button.disabled = false;
+              button.textContent = "Guardar nota";
+            }
+          });
+        });
+        card.querySelectorAll("button[data-status]").forEach((button) => {
+          button.addEventListener("click", async () => {
+            try {
+              setStatus("authStatus", `Actualizando ${button.dataset.order}...`);
+              await updateOrderStatus(button.dataset.order, button.dataset.status);
+              setStatus("authStatus", `Pedido ${button.dataset.order} actualizado.`);
+            } catch (error) {
+              setStatus("authStatus", `No se pudo actualizar: ${error.message}`, true);
+            }
+          });
+        });
+        container.appendChild(card);
+      });
+    }
+    function renderMemory(slot, memory) {
+      const stage = memory.active_stage || "sin sesion activa";
+      const sessionPayload = memory.session?.payload || {};
+      const payloadSummary = [
+        sessionPayload.order_detail ? `Pedido activo: ${sessionPayload.order_detail}` : "",
+        sessionPayload.order_type ? `Entrega activa: ${sessionPayload.order_type}` : "",
+        sessionPayload.address ? `Direccion activa: ${sessionPayload.address}` : "",
+        sessionPayload.payment_method ? `Pago activo: ${sessionPayload.payment_method}` : "",
+      ].filter(Boolean).join("\n");
+      const messagesHtml = (memory.recent_messages || []).length
+        ? memory.recent_messages.map((message) => `
+            <div class="memory-msg">
+              <strong>${message.direction === "inbound" ? "Cliente" : "Aira"} · ${message.created_at}</strong>
+              ${escapeHtml(message.message_text)}
+            </div>
+          `).join("")
+        : '<div class="empty">Aun no hay mensajes registrados para este pedido.</div>';
+      slot.innerHTML = `
+        <div class="memory-box">
+          <div class="memory-title">Memoria operativa</div>
+          <div class="memory-meta">Etapa activa: ${escapeHtml(stage)}
+Sesion activa: ${memory.has_active_session ? "si" : "no"}
+${payloadSummary ? payloadSummary : "Sin payload operativo adicional."}</div>
+          <div class="memory-log">${messagesHtml}</div>
+          <div class="customer-summary-box" id="customer-summary-${memory.order_number}">
+            <div class="memory-title">Resumen del cliente</div>
+            <div class="hint">Cargando habitos y ultimos pedidos...</div>
+          </div>
+          <div class="timeline-box" id="timeline-${memory.order_number}">
+            <div class="memory-title">Linea de tiempo</div>
+            <div class="hint">Cargando eventos del pedido...</div>
+          </div>
+        </div>
+      `;
+      loadCustomerSummary(memory.order_number);
+      loadTimeline(memory.order_number);
+    }
+    async function loadCustomerSummary(orderNumber) {
+      const slot = document.getElementById(`customer-summary-${orderNumber}`);
+      if (!slot) return;
+      try {
+        const summary = await getJson(`/orders/${orderNumber}/customer-summary`);
+        const recentOrdersHtml = (summary.recent_orders || []).length
+          ? summary.recent_orders.map((order) => `
+              <div class="timeline-item">
+                <strong>${escapeHtml(order.order_number)} · ${escapeHtml(order.created_at)}</strong>
+                <div>${escapeHtml(order.order_detail)}</div>
+                <div class="hint">Entrega: ${escapeHtml(order.order_type)} | Estado: ${escapeHtml(order.status)} | Total: ${order.total != null ? escapeHtml(formatMoney(order.total)) : "Sin total"}</div>
+              </div>
+            `).join("")
+          : '<div class="empty">Aun no hay historial suficiente para este cliente.</div>';
+        slot.innerHTML = `
+          <div class="memory-title">Resumen del cliente</div>
+          <div class="summary-grid">
+            <div class="summary-pill"><strong>Total pedidos</strong><div>${escapeHtml(String(summary.total_orders || 0))}</div></div>
+            <div class="summary-pill"><strong>Ultimo pedido</strong><div>${escapeHtml(summary.last_order_at || "Sin registro")}</div></div>
+            <div class="summary-pill"><strong>Nota del cliente</strong><div>${escapeHtml(summary.customer_note || "Sin nota interna")}</div></div>
+            <div class="summary-pill"><strong>Entrega frecuente</strong><div>${escapeHtml(summary.preferred_order_type || "Sin patron")}</div></div>
+            <div class="summary-pill"><strong>Pago frecuente</strong><div>${escapeHtml(summary.preferred_payment_method || "Sin patron")}</div></div>
+            <div class="summary-pill"><strong>Indicacion frecuente</strong><div>${escapeHtml(summary.preferred_observation || "Sin patron")}</div></div>
+            <div class="summary-pill"><strong>Favoritos</strong><div>${escapeHtml((summary.favorite_items || []).join(", ") || "Sin patron")}</div></div>
+            <div class="summary-pill"><strong>Ultima direccion</strong><div>${escapeHtml(summary.last_address || "Sin direccion")}</div></div>
+            <div class="summary-pill"><strong>Ultima referencia</strong><div>${escapeHtml(summary.last_reference_text || "Sin referencia")}</div></div>
+          </div>
+          <label style="margin-top: 10px;">Nota interna del cliente
+            <textarea id="customer-note-${orderNumber}" style="min-height: 88px;" placeholder="Ejemplo: tocar timbre, no llamar, cliente frecuente, direccion complicada...">${escapeHtml(summary.customer_note || "")}</textarea>
+          </label>
+          <div class="actions">
+            <button class="ghost" type="button" onclick="saveCustomerNote('${orderNumber}')">Guardar nota del cliente</button>
+          </div>
+          <div class="memory-title">Ultimos pedidos</div>
+          ${recentOrdersHtml}
+        `;
+      } catch (error) {
+        slot.innerHTML = `<div class="memory-title">Resumen del cliente</div><div class="memory-meta">No se pudo cargar el resumen del cliente: ${escapeHtml(error.message)}</div>`;
+      }
+    }
+    async function saveCustomerNote(orderNumber) {
+      const textarea = document.getElementById(`customer-note-${orderNumber}`);
+      if (!textarea) return;
+      try {
+        setStatus("authStatus", `Guardando nota del cliente en ${orderNumber}...`);
+        await sendJson(`/orders/${orderNumber}/customer-note`, "PUT", { note: textarea.value });
+        await Promise.all([loadCustomerSummary(orderNumber), loadTimeline(orderNumber)]);
+        setStatus("authStatus", `Nota del cliente actualizada en ${orderNumber}.`);
+      } catch (error) {
+        setStatus("authStatus", `No se pudo guardar la nota del cliente: ${error.message}`, true);
+      }
+    }
+    async function loadTimeline(orderNumber) {
+      const slot = document.getElementById(`timeline-${orderNumber}`);
+      if (!slot) return;
+      try {
+        const timelineData = await getJson(`/orders/${orderNumber}/timeline`);
+        const timelineHtml = (timelineData.timeline || []).length
+          ? timelineData.timeline.map((item) => `
+              <div class="timeline-item">
+                <strong>${escapeHtml(item.label)} · ${escapeHtml(item.created_at)}</strong>
+                <div class="hint">Fuente: ${escapeHtml(item.source)}</div>
+                <div>${escapeHtml(item.detail || "Sin detalle adicional.")}</div>
+              </div>
+            `).join("")
+          : '<div class="empty">Aun no hay eventos registrados en esta linea de tiempo.</div>';
+        slot.innerHTML = `<div class="memory-title">Linea de tiempo</div>${timelineHtml}`;
+      } catch (error) {
+        slot.innerHTML = `<div class="memory-title">Linea de tiempo</div><div class="memory-meta">No se pudo cargar la linea de tiempo: ${escapeHtml(error.message)}</div>`;
+      }
+    }
+    function applyOrderFilters() {
+      const query = document.getElementById("orderSearch").value.trim().toLowerCase();
+      const status = document.getElementById("orderStatusFilter").value.trim().toLowerCase();
+      const filtered = currentOrders.filter((order) => {
+        const haystack = [order.order_number, order.customer_name, order.customer_phone, order.order_detail].filter(Boolean).join(" ").toLowerCase();
+        return (!query || haystack.includes(query)) && (!status || (order.status || "").toLowerCase() === status);
+      });
+      renderOrders(filtered);
+    }
+    async function loadBusiness() {
+      const data = await getJson("/business");
+      businessToForm(data);
+    }
+    async function loadMenu() {
+      const data = await getJson("/menu");
+      menuState = normalizeMenuStateFromApi(data);
+      renderMenuBuilder();
+      syncJsonFromState();
+    }
+    async function loadOrders() {
+      const data = await getJson("/orders?limit=25");
+      currentOrders = data.orders || [];
+      applyOrderFilters();
+    }
+    async function loadSummary() {
+      const summary = await getJson("/orders/summary");
+      const byStatus = summary.by_status || {};
+      const pending = (byStatus["nuevo"] || 0) + (byStatus["preparando"] || 0) + (byStatus["en camino"] || 0);
+      document.getElementById("metricTotalOrders").textContent = String(summary.total_orders || 0);
+      document.getElementById("metricRevenue").textContent = formatMoney(summary.total_revenue || 0);
+      document.getElementById("metricPending").textContent = String(pending);
+      document.getElementById("metricDelivered").textContent = String(byStatus["entregado"] || 0);
+      document.getElementById("metricStatuses").textContent = Object.entries(byStatus).map(([label, total]) => `${label}: ${total}`).join(" | ") || "Sin datos todavía.";
+    }
+    async function updateOrderStatus(orderNumber, status) {
+      await sendJson(`/orders/${orderNumber}/status`, "PUT", { status });
+      await Promise.all([loadOrders(), loadSummary()]);
+      updateLastRefreshLabel();
+    }
+    async function validateAccess(showMessage = true) {
+      try {
+        const response = await fetch("/admin/check", { headers: authHeaders() });
+        if (!response.ok) throw new Error("Código inválido");
+        if (showMessage) setStatus("authStatus", "Acceso correcto.");
+        return true;
+      } catch (error) {
+        if (showMessage) setStatus("authStatus", "Ingresa un código válido para usar el panel.", true);
+        return false;
+      }
+    }
+    async function loadAll() {
+      const ok = await validateAccess(false);
+      if (!ok) {
+        setStatus("authStatus", "Ingresa tu código para cargar el panel.");
+        return;
+      }
+      document.getElementById("adminCode").value = getAdminCode();
+      await Promise.all([loadBusiness(), loadMenu(), loadOrders(), loadSummary()]);
+      updateLastRefreshLabel();
+      setStatus("authStatus", "Panel cargado correctamente.");
+    }
+    function startAutoRefresh() {
+      if (refreshTimer) window.clearInterval(refreshTimer);
+      refreshTimer = window.setInterval(async () => {
+        const ok = await validateAccess(false);
+        if (!ok) return;
+        try {
+          await Promise.all([loadOrders(), loadSummary()]);
+          updateLastRefreshLabel();
+        } catch (error) {
+          console.error(error);
+        }
+      }, 30000);
+    }
+    document.getElementById("loginButton").addEventListener("click", async () => {
+      localStorage.setItem("aira_admin_code", document.getElementById("adminCode").value.trim());
+      await loadAll();
+    });
+    document.getElementById("logoutButton").addEventListener("click", () => {
+      localStorage.removeItem("aira_admin_code");
+      document.getElementById("adminCode").value = "";
+      setStatus("authStatus", "Sesión local cerrada.");
+    });
+    document.getElementById("refreshAll").addEventListener("click", async () => {
+      try {
+        setStatus("authStatus", "Actualizando panel...");
+        await loadAll();
+      } catch (error) {
+        setStatus("authStatus", `No se pudo actualizar: ${error.message}`, true);
+      }
+    });
+    document.getElementById("saveBusiness").addEventListener("click", async () => {
+      try {
+        setStatus("businessStatus", "Guardando...");
+        const savedBusiness = await sendJson("/business", "PUT", formToBusiness());
+        if (savedBusiness.admin_access_code) {
+          localStorage.setItem("aira_admin_code", savedBusiness.admin_access_code);
+          document.getElementById("adminCode").value = savedBusiness.admin_access_code;
+        }
+        setStatus("businessStatus", "Negocio actualizado correctamente.");
+      } catch (error) {
+        setStatus("businessStatus", `No se pudo guardar: ${error.message}`, true);
+      }
+    });
+    document.getElementById("addCategory").addEventListener("click", addCategory);
+    document.getElementById("saveMenuVisual").addEventListener("click", async () => {
+      try {
+        validateMenuState();
+        setStatus("menuStatus", "Guardando menú...");
+        await sendJson("/menu", "PUT", serializeMenuPayload());
+        setStatus("menuStatus", "Menú actualizado correctamente.");
+        syncJsonFromState();
+      } catch (error) {
+        setStatus("menuStatus", `No se pudo guardar: ${error.message}`, true);
+      }
+    });
+    document.getElementById("formatMenu").addEventListener("click", () => {
+      try {
+        document.getElementById("menuJson").value = JSON.stringify(JSON.parse(document.getElementById("menuJson").value), null, 2);
+        setStatus("menuStatus", "JSON formateado.");
+      } catch (error) {
+        setStatus("menuStatus", "El JSON del menú no es válido.", true);
+      }
+    });
+    document.getElementById("syncJsonToBuilder").addEventListener("click", () => {
+      try {
+        syncStateFromJson();
+        setStatus("menuStatus", "JSON cargado al editor visual.");
+      } catch (error) {
+        setStatus("menuStatus", `No se pudo cargar el JSON: ${error.message}`, true);
+      }
+    });
+    document.getElementById("saveMenuJson").addEventListener("click", async () => {
+      try {
+        syncStateFromJson();
+        validateMenuState();
+        setStatus("menuStatus", "Guardando menú...");
+        await sendJson("/menu", "PUT", serializeMenuPayload());
+        setStatus("menuStatus", "Menú actualizado correctamente.");
+      } catch (error) {
+        setStatus("menuStatus", `No se pudo guardar: ${error.message}`, true);
+      }
+    });
+    document.getElementById("refreshOrders").addEventListener("click", async () => {
+      try {
+        await Promise.all([loadOrders(), loadSummary()]);
+        updateLastRefreshLabel();
+      } catch (error) {
+        setStatus("authStatus", `No se pudo refrescar: ${error.message}`, true);
+      }
+    });
+    document.getElementById("orderSearch").addEventListener("input", applyOrderFilters);
+    document.getElementById("orderStatusFilter").addEventListener("change", applyOrderFilters);
+    document.querySelectorAll(".tab-link[data-panel]").forEach((button) => {
+      button.addEventListener("click", () => setActivePanel(button.dataset.panel));
+    });
+    document.getElementById("adminCode").value = getAdminCode();
+    setActivePanel(activePanel);
+    startAutoRefresh();
+    loadAll().catch((error) => console.error(error));
+  </script>
+</body>
+</html>
