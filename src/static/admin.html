@@ -24,8 +24,55 @@
     }
     .wrap { width: min(1260px, 92vw); margin: 34px auto 60px; }
     .hero { display: grid; gap: 10px; margin-bottom: 22px; }
+    .hero-shell {
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(31,109,82,0.12);
+      background: rgba(255,255,255,0.72);
+      color: var(--accent);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
     h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.8rem); line-height: 0.98; }
     .sub { max-width: 840px; color: var(--muted); font-size: 1rem; }
+    .hero-copy, .hero-notes {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255,250,242,0.98) 0%, rgba(251,244,234,0.96) 100%);
+      box-shadow: var(--shadow);
+    }
+    .hero-copy {
+      padding: 26px;
+      display: grid;
+      gap: 14px;
+    }
+    .hero-notes {
+      padding: 20px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+    .note-card {
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.9);
+    }
+    .note-card strong {
+      display: block;
+      margin-bottom: 6px;
+    }
     .bar, .card {
       border: 1px solid var(--line);
       border-radius: 20px;
@@ -39,6 +86,73 @@
       flex-wrap: wrap;
       padding: 14px 16px;
       margin-bottom: 18px;
+    }
+    .access-shell {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+    .access-main, .access-side {
+      display: grid;
+      gap: 14px;
+    }
+    .access-side {
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff 0%, #faf2e8 100%);
+    }
+    .access-grid {
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) auto auto;
+      gap: 10px;
+      align-items: end;
+    }
+    .helper-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .helper-list li {
+      display: grid;
+      gap: 4px;
+      padding-left: 18px;
+      position: relative;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+    .helper-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--warm);
+    }
+    .top-summary {
+      justify-content: space-between;
+    }
+    .summary-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      width: 100%;
+    }
+    .summary-card {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.82);
+    }
+    .summary-card strong {
+      display: block;
+      margin-bottom: 6px;
     }
     .grid { display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 22px; }
     .grid.single-panel { grid-template-columns: 1fr; }
@@ -250,6 +364,71 @@
     .builder { display: grid; gap: 14px; margin-top: 8px; }
     .builder-category { padding: 14px; }
     .builder-item { padding: 10px; }
+    .wizard {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 18px;
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #fffaf2 0%, #f7efe4 100%);
+    }
+    .wizard-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .pill-grid {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .pill-option {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: #fff;
+      cursor: pointer;
+      color: var(--ink);
+    }
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .check-card {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    .preview-box {
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: #fff;
+      white-space: pre-line;
+      line-height: 1.5;
+    }
+    .section-guide {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .guide-card {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    .guide-card strong {
+      display: block;
+      margin-bottom: 6px;
+    }
     .empty {
       padding: 20px;
       border-radius: 16px;
@@ -262,7 +441,8 @@
     summary { cursor: pointer; color: var(--accent); font-weight: 600; margin-bottom: 10px; }
     code { background: rgba(31,109,82,0.08); padding: 2px 6px; border-radius: 8px; }
     @media (max-width: 1120px) {
-      .grid, .metrics, .row2, .row3, .filters { grid-template-columns: 1fr; }
+      .grid, .metrics, .row2, .row3, .filters, .hero-shell, .access-shell, .summary-strip, .section-guide { grid-template-columns: 1fr; }
+      .access-grid { grid-template-columns: 1fr; }
       .tabbar { flex-direction: column; }
       .tab-button { width: 100%; }
     }
@@ -270,25 +450,73 @@
 </head>
 <body>
   <div class="wrap">
-    <section class="hero">
-      <h1>Aira Admin</h1>
-      <div class="sub">Panel simple para revisar pedidos, ajustar tu negocio y actualizar tus productos sin tocar nada técnico.</div>
+    <section class="hero hero-shell">
+      <div class="hero-copy">
+        <div class="eyebrow">Aira Control Center</div>
+        <h1>Administra tu negocio sin complicarte</h1>
+        <div class="sub">Configura tu asistente, revisa pedidos y actualiza tu catálogo desde un panel pensado para socios no técnicos. La idea es que entiendas rápido qué hacer, sin sentir que estás tocando un sistema complicado.</div>
+        <div class="pill-grid">
+          <div class="pill-option">Pedidos en un solo lugar</div>
+          <div class="pill-option">Configura el rubro sin tocar código</div>
+          <div class="pill-option">Edita productos y flujo en minutos</div>
+        </div>
+      </div>
+      <div class="hero-notes">
+        <div class="note-card">
+          <strong>1. Entra con tu código</strong>
+          <div class="hint">Tu sesión local se guarda en este navegador para que no tengas que escribirlo una y otra vez.</div>
+        </div>
+        <div class="note-card">
+          <strong>2. Elige la sección correcta</strong>
+          <div class="hint">Empieza por Pedidos si vas a operar. Ve a Negocio si quieres cambiar el estilo de Aira. Ve a Menú si vas a editar lo que verá el cliente.</div>
+        </div>
+        <div class="note-card">
+          <strong>3. Guarda y sigue vendiendo</strong>
+          <div class="hint">Cada cambio importante queda listo para que Aira lo use, sin que el socio tenga que tocar nada técnico.</div>
+        </div>
+      </div>
     </section>
 
-    <div class="bar">
-      <label style="min-width: 280px;">Código de acceso
-        <input id="adminCode" type="password" placeholder="Ingresa tu código" />
-      </label>
-      <button id="loginButton" type="button">Entrar</button>
-      <button class="alt" id="logoutButton" type="button">Salir</button>
-      <div class="status" id="authStatus"></div>
+    <div class="card access-shell">
+      <div class="access-main">
+        <div>
+          <div class="section-kicker">Acceso</div>
+          <h2 style="margin-bottom: 8px;">Entra al panel y sigue operando</h2>
+          <div class="hint">Usa tu código de acceso para cargar pedidos, negocio y menú. Si cambias el código del negocio, este panel lo recordará al guardar.</div>
+        </div>
+        <div class="access-grid">
+          <label>Código de acceso
+            <input id="adminCode" type="password" placeholder="Ingresa tu código" />
+          </label>
+          <button id="loginButton" type="button">Entrar al panel</button>
+          <button class="alt" id="logoutButton" type="button">Cerrar sesión</button>
+        </div>
+        <div class="status" id="authStatus"></div>
+      </div>
+      <div class="access-side">
+        <strong>Qué puedes hacer desde aquí</strong>
+        <ul class="helper-list">
+          <li><strong>Pedidos:</strong> cambia estados, revisa el contexto y atiende rápido.</li>
+          <li><strong>Negocio:</strong> define el rubro, el tono de Aira y el flujo principal.</li>
+          <li><strong>Menú o catálogo:</strong> edita categorías y productos sin tocar JSON si no quieres.</li>
+        </ul>
+      </div>
     </div>
 
-    <div class="bar">
-      <div class="status">
-        <strong>Panel:</strong> pedidos + negocio + menú |
-        <strong>Auto refresh:</strong> cada 30 segundos |
-        <span id="lastRefresh"><strong>Última actualización:</strong> pendiente</span>
+    <div class="bar top-summary">
+      <div class="summary-strip">
+        <div class="summary-card">
+          <strong>Operación</strong>
+          <div class="hint">Pedidos, negocio y menú en un solo panel.</div>
+        </div>
+        <div class="summary-card">
+          <strong>Actualización automática</strong>
+          <div class="hint">El panel refresca pedidos y resumen cada 30 segundos.</div>
+        </div>
+        <div class="summary-card">
+          <strong id="lastRefresh">Última actualización: pendiente</strong>
+          <div class="hint">Si quieres, también puedes forzar una recarga manual.</div>
+        </div>
       </div>
       <div class="actions">
         <button class="ghost" id="refreshAll" type="button">Actualizar todo</button>
@@ -308,10 +536,85 @@
             <div>
               <div class="section-kicker">Paso 2</div>
               <h2>Negocio</h2>
-              <div class="hint">Configura tiempos, pagos, delivery y sugerencias del negocio.</div>
+              <div class="hint">Configura el tipo de negocio, el estilo de Aira y los datos base del negocio.</div>
             </div>
           </div>
           <div class="stack-sm">
+            <div class="section-guide">
+              <div class="guide-card">
+                <strong>Define tu rubro</strong>
+                <div class="hint">Elige si vendes comida, celulares, servicios u otro tipo de negocio.</div>
+              </div>
+              <div class="guide-card">
+                <strong>Activa funciones</strong>
+                <div class="hint">Decide si Aira tomará pedidos, agendará citas, cotizará o solo responderá consultas.</div>
+              </div>
+              <div class="guide-card">
+                <strong>Guarda y prueba</strong>
+                <div class="hint">Revisa la vista previa antes de guardar para entender cómo se presentará Aira al cliente.</div>
+              </div>
+            </div>
+            <div class="wizard">
+              <div>
+                <strong>Asistente por rubro</strong>
+                <div class="hint">El socio puede definir el rubro, el objetivo principal y el estilo de atencion sin tocar codigo.</div>
+              </div>
+              <div class="wizard-grid">
+                <label>Tipo de negocio
+                  <select id="business_type">
+                    <option value="restaurante">Restaurante</option>
+                    <option value="abarrotes">Abarrotes</option>
+                    <option value="celulares">Celulares</option>
+                    <option value="secretaria">Secretaria</option>
+                    <option value="ropa">Ropa</option>
+                    <option value="servicios">Servicios</option>
+                    <option value="otro">Otro</option>
+                  </select>
+                </label>
+                <label>Objetivo principal
+                  <select id="primary_goal">
+                    <option value="tomar_pedidos">Tomar pedidos</option>
+                    <option value="responder_consultas">Responder consultas</option>
+                    <option value="cotizar_productos">Cotizar productos</option>
+                    <option value="agendar_citas">Agendar citas</option>
+                    <option value="mostrar_catalogo">Mostrar catalogo</option>
+                    <option value="derivar_humano">Derivar a asesor</option>
+                  </select>
+                </label>
+              </div>
+              <div class="wizard-grid">
+                <label>Estilo de atencion
+                  <select id="tone_style">
+                    <option value="formal">Formal</option>
+                    <option value="cordial">Cordial</option>
+                    <option value="vendedor">Vendedor</option>
+                    <option value="cercano">Cercano</option>
+                  </select>
+                </label>
+                <label>Nivel visual
+                  <select id="emoji_level">
+                    <option value="sin_emojis">Sin emojis</option>
+                    <option value="moderado">Moderado</option>
+                    <option value="expresivo">Expresivo</option>
+                  </select>
+                </label>
+              </div>
+              <div>
+                <div class="hint" style="margin-bottom: 8px;">Capacidades activas</div>
+                <div class="check-grid">
+                  <label class="check-card"><input type="checkbox" class="capability" value="tomar_pedidos" /> <span>Tomar pedidos</span></label>
+                  <label class="check-card"><input type="checkbox" class="capability" value="responder_consultas" /> <span>Responder consultas</span></label>
+                  <label class="check-card"><input type="checkbox" class="capability" value="cotizar_productos" /> <span>Cotizar productos</span></label>
+                  <label class="check-card"><input type="checkbox" class="capability" value="agendar_citas" /> <span>Agendar citas</span></label>
+                  <label class="check-card"><input type="checkbox" class="capability" value="mostrar_catalogo" /> <span>Mostrar catalogo</span></label>
+                  <label class="check-card"><input type="checkbox" class="capability" value="derivar_humano" /> <span>Derivar a asesor</span></label>
+                </div>
+              </div>
+              <div>
+                <div class="hint" style="margin-bottom: 8px;">Vista previa del enfoque</div>
+                <div class="preview-box" id="businessPreview">Selecciona un rubro para ver como se posicionara Aira.</div>
+              </div>
+            </div>
             <div class="row2">
               <label>Nombre del negocio<input id="business_name" /></label>
               <label>Nombre de la asistente<input id="assistant_name" /></label>
@@ -355,6 +658,20 @@
               <div class="hint">Carga categorías y productos desde el editor visual. El JSON queda como opción avanzada.</div>
             </div>
           </div>
+          <div class="section-guide">
+            <div class="guide-card">
+              <strong>Crea categorías</strong>
+              <div class="hint">Agrupa lo que vendes para que Aira lo muestre de manera ordenada al cliente.</div>
+            </div>
+            <div class="guide-card">
+              <strong>Agrega productos</strong>
+              <div class="hint">Pon nombre, precio y si está activo o no. Así el socio controla lo visible sin escribir código.</div>
+            </div>
+            <div class="guide-card">
+              <strong>Modo avanzado opcional</strong>
+              <div class="hint">Si sabes lo que haces, puedes usar JSON. Si no, el editor visual basta.</div>
+            </div>
+          </div>
           <div class="hint">Este bloque es para cargar lo que verá el cliente en WhatsApp.</div>
           <div class="builder section-anchor" id="menuBuilder"></div>
           <div class="actions">
@@ -381,6 +698,20 @@
             <div class="section-kicker">Paso 1</div>
             <h2>Pedidos</h2>
             <div class="hint">Aquí cambias estados, revisas clientes y ves el contexto operativo de cada pedido.</div>
+          </div>
+        </div>
+        <div class="section-guide">
+          <div class="guide-card">
+            <strong>Revisa lo urgente</strong>
+            <div class="hint">Usa las métricas y filtros para detectar rápido lo nuevo, lo pendiente y lo entregado.</div>
+          </div>
+          <div class="guide-card">
+            <strong>Opera sin perder contexto</strong>
+            <div class="hint">Cada pedido puede mostrar memoria, cliente, timeline y notas internas.</div>
+          </div>
+          <div class="guide-card">
+            <strong>Mueve estados rápido</strong>
+            <div class="hint">Desde aquí puedes pasar de nuevo a preparando, en camino o entregado.</div>
           </div>
         </div>
         <div class="actions"><button id="refreshOrders" type="button">Actualizar pedidos</button></div>
@@ -467,13 +798,21 @@
       }
     }
     function updateLastRefreshLabel() {
-      document.getElementById("lastRefresh").innerHTML =
-        `<strong>Última actualización:</strong> ${new Date().toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}`;
+      document.getElementById("lastRefresh").textContent =
+        `Última actualización: ${new Date().toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}`;
     }
     function businessToForm(data) {
       document.getElementById("business_name").value = data.business_name || "";
       document.getElementById("assistant_name").value = data.assistant_name || "";
       document.getElementById("admin_access_code").value = data.admin_access_code || "";
+      document.getElementById("business_type").value = data.business_type || "restaurante";
+      document.getElementById("primary_goal").value = data.primary_goal || "tomar_pedidos";
+      document.getElementById("tone_style").value = data.tone_style || "cordial";
+      document.getElementById("emoji_level").value = data.emoji_level || "moderado";
+      const enabledCapabilities = new Set(data.enabled_capabilities || []);
+      document.querySelectorAll(".capability").forEach((checkbox) => {
+        checkbox.checked = enabledCapabilities.has(checkbox.value);
+      });
       document.getElementById("greeting").value = data.greeting || "";
       document.getElementById("business_hours").value = data.business_hours || "";
       document.getElementById("business_address").value = data.business_address || "";
@@ -489,12 +828,18 @@
         const message = rule.message ? `=>${rule.message}` : "";
         return `${rule.trigger_category}=>${rule.suggested_item}${message}`;
       }).join("\n");
+      renderBusinessPreview();
     }
     function formToBusiness() {
       return {
         business_name: document.getElementById("business_name").value.trim(),
         assistant_name: document.getElementById("assistant_name").value.trim(),
         admin_access_code: document.getElementById("admin_access_code").value.trim(),
+        business_type: document.getElementById("business_type").value,
+        primary_goal: document.getElementById("primary_goal").value,
+        tone_style: document.getElementById("tone_style").value,
+        emoji_level: document.getElementById("emoji_level").value,
+        enabled_capabilities: Array.from(document.querySelectorAll(".capability:checked")).map((checkbox) => checkbox.value),
         greeting: document.getElementById("greeting").value.trim(),
         business_hours: document.getElementById("business_hours").value.trim(),
         business_address: document.getElementById("business_address").value.trim(),
@@ -518,6 +863,59 @@
           };
         }),
       };
+    }
+    function renderBusinessPreview() {
+      const type = document.getElementById("business_type").value;
+      const goal = document.getElementById("primary_goal").value;
+      const tone = document.getElementById("tone_style").value;
+      const emojiLevel = document.getElementById("emoji_level").value;
+      const businessName = document.getElementById("business_name").value.trim() || "tu negocio";
+      const assistantName = document.getElementById("assistant_name").value.trim() || "Aira";
+      const capabilityLabels = Array.from(document.querySelectorAll(".capability:checked")).map((checkbox) => checkbox.parentElement.textContent.trim());
+      const typeLabels = {
+        restaurante: "restaurante",
+        abarrotes: "tienda de abarrotes",
+        celulares: "venta de celulares",
+        secretaria: "secretaria virtual",
+        ropa: "tienda de ropa",
+        servicios: "negocio de servicios",
+        otro: "negocio general",
+      };
+      const toneLabels = {
+        formal: "formal",
+        cordial: "cordial",
+        vendedor: "vendedor",
+        cercano: "cercano",
+      };
+      const emojiLabels = {
+        sin_emojis: "sin emojis",
+        moderado: "con emojis moderados",
+        expresivo: "con estilo expresivo",
+      };
+      const goalLabels = {
+        tomar_pedidos: "tomar pedidos",
+        responder_consultas: "responder consultas",
+        cotizar_productos: "cotizar productos",
+        agendar_citas: "agendar citas",
+        mostrar_catalogo: "mostrar catalogo",
+        derivar_humano: "derivar a un asesor",
+      };
+      const typeEmoji = {
+        restaurante: "🍽️",
+        abarrotes: "🛒",
+        celulares: "📱",
+        secretaria: "📅",
+        ropa: "👕",
+        servicios: "🧰",
+        otro: "✨",
+      };
+      const opening = emojiLevel === "sin_emojis" ? "Hola" : `${typeEmoji[type] || "✨"} Hola`;
+      document.getElementById("businessPreview").textContent =
+        `${opening}, soy ${assistantName} y te ayudare con ${goalLabels[goal] || goal} en ${businessName}.\n\n` +
+        `Rubro: ${typeLabels[type] || "negocio general"}.\n` +
+        `Estilo: ${toneLabels[tone] || tone}, ${emojiLabels[emojiLevel] || emojiLevel}.\n` +
+        `Capacidades activas: ${capabilityLabels.join(", ") || "ninguna seleccionada"}.\n\n` +
+        `Asi se sentira Aira: cercana para el socio, clara para el cliente y lista para guiar la conversacion sin depender tanto de texto libre.`;
     }
     function formatMoney(value) { return `S/ ${Number(value || 0).toFixed(2)}`; }
     function chipClass(status) {
@@ -1023,6 +1421,13 @@ ${payloadSummary ? payloadSummary : "Sin payload operativo adicional."}</div>
     });
     document.getElementById("orderSearch").addEventListener("input", applyOrderFilters);
     document.getElementById("orderStatusFilter").addEventListener("change", applyOrderFilters);
+    ["business_type", "primary_goal", "tone_style", "emoji_level", "business_name", "assistant_name"].forEach((id) => {
+      document.getElementById(id).addEventListener("input", renderBusinessPreview);
+      document.getElementById(id).addEventListener("change", renderBusinessPreview);
+    });
+    document.querySelectorAll(".capability").forEach((checkbox) => {
+      checkbox.addEventListener("change", renderBusinessPreview);
+    });
     document.querySelectorAll(".tab-link[data-panel]").forEach((button) => {
       button.addEventListener("click", () => setActivePanel(button.dataset.panel));
     });
