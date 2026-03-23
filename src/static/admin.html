@@ -6,22 +6,29 @@
   <title>Aira Admin</title>
   <style>
     :root {
-      --ink: #183126;
-      --muted: #4f6358;
-      --accent: #0f6a43;
-      --accent-strong: #0a5133;
-      --warm: #bf5a23;
-      --danger: #b54824;
-      --line: #d7e2da;
-      --card: rgba(247, 252, 249, 0.97);
-      --shadow: 0 18px 42px rgba(16, 56, 38, 0.1);
+      --bg-0: #08110d;
+      --bg-1: #0d1813;
+      --bg-2: #122119;
+      --ink: #f3fff7;
+      --muted: #a9c4b4;
+      --accent: #34f08a;
+      --accent-strong: #10b866;
+      --accent-soft: rgba(52, 240, 138, 0.16);
+      --warm: #ff8a3d;
+      --danger: #ff6b57;
+      --line: rgba(108, 162, 132, 0.28);
+      --card: rgba(10, 20, 15, 0.88);
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
       color: var(--ink);
-      background: linear-gradient(180deg, #eef6f0 0%, #e0ece3 100%);
+      background:
+        radial-gradient(circle at top left, rgba(52, 240, 138, 0.18), transparent 26%),
+        radial-gradient(circle at top right, rgba(30, 255, 170, 0.1), transparent 20%),
+        linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 48%, #09120e 100%);
     }
     .wrap { width: min(1260px, 92vw); margin: 34px auto 60px; }
     .hero { display: grid; gap: 10px; margin-bottom: 22px; }
@@ -37,20 +44,30 @@
       width: fit-content;
       padding: 8px 12px;
       border-radius: 999px;
-      border: 1px solid rgba(31,109,82,0.12);
-      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(52, 240, 138, 0.22);
+      background: rgba(8,20,15,0.78);
       color: var(--accent);
       font-size: 0.82rem;
       font-weight: 700;
       letter-spacing: 0.04em;
       text-transform: uppercase;
     }
-    h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.8rem); line-height: 0.98; }
+    h1 {
+      margin: 0;
+      font-size: clamp(2.2rem, 5vw, 4.4rem);
+      line-height: 0.92;
+      font-family: "Palatino Linotype", Georgia, serif;
+      letter-spacing: -0.04em;
+      color: #f3fff7;
+    }
     .sub { max-width: 840px; color: var(--muted); font-size: 1rem; }
+    .hero-copy .pill-option {
+      box-shadow: inset 0 0 0 1px rgba(52, 240, 138, 0.12);
+    }
     .hero-copy, .hero-notes {
       border: 1px solid var(--line);
       border-radius: 24px;
-      background: linear-gradient(180deg, rgba(247,252,249,0.98) 0%, rgba(236,246,240,0.96) 100%);
+      background: linear-gradient(180deg, rgba(8,20,15,0.94) 0%, rgba(12,26,19,0.9) 100%);
       box-shadow: var(--shadow);
     }
     .hero-copy {
@@ -68,7 +85,7 @@
       padding: 16px;
       border-radius: 18px;
       border: 1px solid var(--line);
-      background: rgba(255,255,255,0.9);
+      background: rgba(14,29,22,0.84);
     }
     .note-card strong {
       display: block;
@@ -103,7 +120,7 @@
       padding: 18px;
       border-radius: 18px;
       border: 1px solid var(--line);
-      background: linear-gradient(180deg, #ffffff 0%, #edf7f1 100%);
+      background: linear-gradient(180deg, rgba(10,21,16,0.96) 0%, rgba(13,27,20,0.92) 100%);
     }
     .access-grid {
       display: grid;
@@ -134,7 +151,7 @@
       width: 8px;
       height: 8px;
       border-radius: 999px;
-      background: var(--warm);
+      background: linear-gradient(180deg, #ff9750 0%, #ff7d31 100%);
     }
     .top-summary {
       justify-content: space-between;
@@ -149,7 +166,7 @@
       padding: 14px;
       border-radius: 16px;
       border: 1px solid var(--line);
-      background: rgba(255,255,255,0.82);
+      background: rgba(12,26,19,0.82);
     }
     .summary-card strong {
       display: block;
@@ -160,15 +177,66 @@
     .app-shell.locked .grid {
       display: none;
     }
+    .app-shell.locked {
+      min-height: 100vh;
+      display: grid;
+      align-content: center;
+    }
+    .app-shell.locked .hero {
+      margin-bottom: 18px;
+    }
+    .app-shell.locked .hero-copy {
+      min-height: 100%;
+    }
+    .app-shell.locked .access-shell {
+      max-width: 980px;
+      margin: 0 auto;
+      width: 100%;
+    }
     .access-shell.unlocked {
-      border-color: rgba(15,106,67,0.2);
-      background: linear-gradient(180deg, rgba(244,251,247,0.98) 0%, rgba(237,247,241,0.98) 100%);
+      border-color: rgba(52, 240, 138, 0.22);
+      background: linear-gradient(180deg, rgba(8,20,15,0.96) 0%, rgba(11,24,18,0.94) 100%);
+    }
+    .app-shell.locked .access-shell {
+      border-color: rgba(52, 240, 138, 0.26);
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
+    }
+    .app-shell:not(.locked) .hero-notes {
+      display: none;
+    }
+    .app-shell:not(.locked) .hero-copy {
+      padding-bottom: 20px;
+    }
+    .auth-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(52, 240, 138, 0.28);
+      background: rgba(52, 240, 138, 0.1);
+      color: #d8ffe9;
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+    .app-shell.locked .auth-badge {
+      display: none;
+    }
+    .access-main h2,
+    .access-side strong,
+    .hero-notes strong,
+    .summary-card strong,
+    .guide-card strong,
+    .metric strong,
+    .memory-title {
+      color: #f7fff9;
     }
     .grid { display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 22px; }
     .grid.single-panel { grid-template-columns: 1fr; }
     .stack { display: grid; gap: 18px; }
     .card { padding: 22px; }
-    .card h2 { margin: 0 0 14px; font-size: 1.28rem; }
+    .card h2 { margin: 0 0 14px; font-size: 1.28rem; color: #f7fff9; }
     .card-head {
       display: flex;
       justify-content: space-between;
@@ -190,21 +258,33 @@
       padding: 12px 14px;
       font: inherit;
       color: var(--ink);
-      background: #fff;
+      background: rgba(6, 17, 12, 0.92);
     }
     textarea { min-height: 110px; resize: vertical; }
     button {
       border: 0;
       border-radius: 999px;
-      background: var(--accent);
-      color: #fff;
+      background: linear-gradient(135deg, #14b363 0%, #34f08a 100%);
+      color: #07150e;
       padding: 11px 17px;
       font: inherit;
       cursor: pointer;
+      font-weight: 700;
+      box-shadow: 0 14px 28px rgba(52, 240, 138, 0.22);
     }
-    button.alt { background: var(--warm); }
-    button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--line); }
-    button.danger { background: var(--danger); }
+    button.alt {
+      background: linear-gradient(135deg, #ff8c44 0%, #ff6f2b 100%);
+      color: #fff8f4;
+    }
+    button.ghost {
+      background: rgba(10, 20, 15, 0.78);
+      color: #d8ffe9;
+      border: 1px solid rgba(52, 240, 138, 0.22);
+    }
+    button.danger {
+      background: linear-gradient(135deg, #e55c4d 0%, #ff7b68 100%);
+      color: #fff;
+    }
     button.small { padding: 8px 12px; font-size: 0.88rem; }
     .actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
     .status { min-height: 22px; color: var(--muted); font-size: 0.92rem; }
@@ -229,10 +309,10 @@
       text-align: center;
     }
     .tab-button.active, .tab-link:hover, .tab-link.active {
-      background: #fff;
-      color: var(--accent);
+      background: rgba(52, 240, 138, 0.12);
+      color: #d8ffe9;
       border-color: var(--line);
-      box-shadow: inset 0 0 0 1px rgba(31,109,82,0.06);
+      box-shadow: inset 0 0 0 1px rgba(52, 240, 138, 0.12);
     }
     .section-anchor {
       scroll-margin-top: 24px;
@@ -244,7 +324,7 @@
       padding: 6px 10px;
       border-radius: 999px;
       border: 1px solid var(--line);
-      background: #fff;
+      background: rgba(11, 26, 19, 0.94);
       color: var(--accent);
       font-size: 0.8rem;
       font-weight: 700;
@@ -262,7 +342,7 @@
       display: none !important;
     }
     .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0; }
-    .metric { padding: 14px; border-radius: 16px; border: 1px solid var(--line); background: #fff; }
+    .metric { padding: 14px; border-radius: 16px; border: 1px solid var(--line); background: rgba(11, 26, 19, 0.92); }
     .metric strong { display: block; margin-top: 8px; font-size: 1.35rem; }
     .status-summary { color: var(--muted); font-size: 0.9rem; margin-bottom: 12px; }
     .filters { display: grid; grid-template-columns: 1fr 220px; gap: 10px; margin: 12px 0 16px; }
@@ -270,7 +350,7 @@
     .order, .builder-category, .builder-item {
       border: 1px solid var(--line);
       border-radius: 16px;
-      background: #fff;
+      background: rgba(11, 26, 19, 0.92);
     }
     .order { padding: 16px; }
     .order-top, .builder-category-head {
@@ -326,7 +406,7 @@
       padding: 10px 12px;
       border-radius: 12px;
       border: 1px solid var(--line);
-      background: #fff;
+      background: rgba(11, 26, 19, 0.95);
       white-space: pre-line;
       line-height: 1.45;
       font-size: 0.92rem;
@@ -346,7 +426,7 @@
     .timeline-item {
       padding: 10px 12px;
       border-radius: 12px;
-      background: #fff;
+      background: rgba(11, 26, 19, 0.95);
       border: 1px solid var(--line);
     }
     .timeline-item strong {
@@ -369,7 +449,7 @@
       padding: 10px 12px;
       border-radius: 12px;
       border: 1px solid var(--line);
-      background: #fff;
+      background: rgba(11, 26, 19, 0.95);
     }
     .builder { display: grid; gap: 14px; margin-top: 8px; }
     .builder-category { padding: 14px; }
@@ -381,7 +461,7 @@
       padding: 18px;
       border-radius: 18px;
       border: 1px solid var(--line);
-      background: linear-gradient(180deg, #fffaf2 0%, #f7efe4 100%);
+      background: linear-gradient(180deg, rgba(10, 24, 17, 0.98) 0%, rgba(11, 28, 19, 0.94) 100%);
     }
     .wizard-grid {
       display: grid;
@@ -397,7 +477,7 @@
       border: 1px solid var(--line);
       border-radius: 999px;
       padding: 10px 14px;
-      background: #fff;
+      background: rgba(11, 26, 19, 0.94);
       cursor: pointer;
       color: var(--ink);
     }
@@ -413,13 +493,13 @@
       padding: 12px;
       border-radius: 14px;
       border: 1px solid var(--line);
-      background: #fff;
+      background: rgba(11, 26, 19, 0.95);
     }
     .preview-box {
       padding: 16px;
       border-radius: 16px;
       border: 1px solid var(--line);
-      background: #fff;
+      background: rgba(11, 26, 19, 0.95);
       white-space: pre-line;
       line-height: 1.5;
     }
@@ -433,7 +513,7 @@
       padding: 14px;
       border-radius: 16px;
       border: 1px solid var(--line);
-      background: #fff;
+      background: rgba(11, 26, 19, 0.95);
     }
     .guide-card strong {
       display: block;
@@ -444,7 +524,7 @@
       border-radius: 16px;
       border: 1px dashed var(--line);
       color: var(--muted);
-      background: rgba(255,255,255,0.55);
+      background: rgba(11, 26, 19, 0.58);
       text-align: center;
     }
     details { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
@@ -463,6 +543,7 @@
     <section class="hero hero-shell">
       <div class="hero-copy">
         <div class="eyebrow">Aira Control Center</div>
+        <div class="auth-badge" id="authBadge">Sesión iniciada en el panel</div>
         <h1>Administra tu negocio sin complicarte</h1>
         <div class="sub">Configura tu asistente, revisa pedidos y actualiza tu catálogo desde un panel pensado para socios no técnicos. La idea es que entiendas rápido qué hacer, sin sentir que estás tocando un sistema complicado.</div>
         <div class="pill-grid">
@@ -491,8 +572,8 @@
       <div class="access-main">
         <div>
           <div class="section-kicker">Acceso</div>
-          <h2 style="margin-bottom: 8px;">Entra al panel y sigue operando</h2>
-          <div class="hint">Usa tu código de acceso para cargar pedidos, negocio y menú. Si cambias el código del negocio, este panel lo recordará al guardar.</div>
+          <h2 style="margin-bottom: 8px;" id="accessTitle">Inicia sesión para entrar al panel</h2>
+          <div class="hint" id="accessHint">Usa tu código de acceso para cargar pedidos, negocio y menú. Si cambias el código del negocio, este panel lo recordará al guardar.</div>
         </div>
         <div class="access-grid">
           <label>Código de acceso
@@ -784,8 +865,24 @@
     function setAuthenticatedState(isAuthenticated) {
       const shell = document.getElementById("appShell");
       const accessShell = document.querySelector(".access-shell");
+      const accessTitle = document.getElementById("accessTitle");
+      const accessHint = document.getElementById("accessHint");
+      const loginButton = document.getElementById("loginButton");
       shell.classList.toggle("locked", !isAuthenticated);
       if (accessShell) accessShell.classList.toggle("unlocked", isAuthenticated);
+      if (accessTitle) {
+        accessTitle.textContent = isAuthenticated
+          ? "Sesión iniciada. Ya puedes administrar tu negocio"
+          : "Inicia sesión para entrar al panel";
+      }
+      if (accessHint) {
+        accessHint.textContent = isAuthenticated
+          ? "Tu acceso ya fue validado. Desde aquí puedes cambiar pedidos, negocio y menú cuando lo necesites."
+          : "Usa tu código de acceso para cargar pedidos, negocio y menú. Si cambias el código del negocio, este panel lo recordará al guardar.";
+      }
+      if (loginButton) {
+        loginButton.textContent = isAuthenticated ? "Panel activo" : "Entrar al panel";
+      }
     }
     function setActivePanel(panel) {
       activePanel = panel;
