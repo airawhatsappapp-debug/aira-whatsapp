@@ -6,21 +6,22 @@
   <title>Aira Admin</title>
   <style>
     :root {
-      --ink: #1c241f;
-      --muted: #687268;
-      --accent: #1f6d52;
-      --warm: #cf6a2a;
+      --ink: #183126;
+      --muted: #4f6358;
+      --accent: #0f6a43;
+      --accent-strong: #0a5133;
+      --warm: #bf5a23;
       --danger: #b54824;
-      --line: #e5d7c8;
-      --card: rgba(255, 250, 242, 0.96);
-      --shadow: 0 16px 40px rgba(39, 28, 16, 0.08);
+      --line: #d7e2da;
+      --card: rgba(247, 252, 249, 0.97);
+      --shadow: 0 18px 42px rgba(16, 56, 38, 0.1);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Georgia, "Times New Roman", serif;
       color: var(--ink);
-      background: linear-gradient(180deg, #f6ecdf 0%, #efe3d2 100%);
+      background: linear-gradient(180deg, #eef6f0 0%, #e0ece3 100%);
     }
     .wrap { width: min(1260px, 92vw); margin: 34px auto 60px; }
     .hero { display: grid; gap: 10px; margin-bottom: 22px; }
@@ -49,7 +50,7 @@
     .hero-copy, .hero-notes {
       border: 1px solid var(--line);
       border-radius: 24px;
-      background: linear-gradient(180deg, rgba(255,250,242,0.98) 0%, rgba(251,244,234,0.96) 100%);
+      background: linear-gradient(180deg, rgba(247,252,249,0.98) 0%, rgba(236,246,240,0.96) 100%);
       box-shadow: var(--shadow);
     }
     .hero-copy {
@@ -102,7 +103,7 @@
       padding: 18px;
       border-radius: 18px;
       border: 1px solid var(--line);
-      background: linear-gradient(180deg, #fff 0%, #faf2e8 100%);
+      background: linear-gradient(180deg, #ffffff 0%, #edf7f1 100%);
     }
     .access-grid {
       display: grid;
@@ -153,6 +154,15 @@
     .summary-card strong {
       display: block;
       margin-bottom: 6px;
+    }
+    .app-shell.locked .top-summary,
+    .app-shell.locked .tabbar,
+    .app-shell.locked .grid {
+      display: none;
+    }
+    .access-shell.unlocked {
+      border-color: rgba(15,106,67,0.2);
+      background: linear-gradient(180deg, rgba(244,251,247,0.98) 0%, rgba(237,247,241,0.98) 100%);
     }
     .grid { display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 22px; }
     .grid.single-panel { grid-template-columns: 1fr; }
@@ -449,7 +459,7 @@
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="wrap app-shell locked" id="appShell">
     <section class="hero hero-shell">
       <div class="hero-copy">
         <div class="eyebrow">Aira Control Center</div>
@@ -770,6 +780,12 @@
       const node = document.getElementById(id);
       node.textContent = message;
       node.style.color = isError ? "#b54824" : "#687268";
+    }
+    function setAuthenticatedState(isAuthenticated) {
+      const shell = document.getElementById("appShell");
+      const accessShell = document.querySelector(".access-shell");
+      shell.classList.toggle("locked", !isAuthenticated);
+      if (accessShell) accessShell.classList.toggle("unlocked", isAuthenticated);
     }
     function setActivePanel(panel) {
       activePanel = panel;
@@ -1311,9 +1327,11 @@ ${payloadSummary ? payloadSummary : "Sin payload operativo adicional."}</div>
       try {
         const response = await fetch("/admin/check", { headers: authHeaders() });
         if (!response.ok) throw new Error("Código inválido");
+        setAuthenticatedState(true);
         if (showMessage) setStatus("authStatus", "Acceso correcto.");
         return true;
       } catch (error) {
+        setAuthenticatedState(false);
         if (showMessage) setStatus("authStatus", "Ingresa un código válido para usar el panel.", true);
         return false;
       }
@@ -1349,6 +1367,7 @@ ${payloadSummary ? payloadSummary : "Sin payload operativo adicional."}</div>
     document.getElementById("logoutButton").addEventListener("click", () => {
       localStorage.removeItem("aira_admin_code");
       document.getElementById("adminCode").value = "";
+      setAuthenticatedState(false);
       setStatus("authStatus", "Sesión local cerrada.");
     });
     document.getElementById("refreshAll").addEventListener("click", async () => {
@@ -1433,6 +1452,7 @@ ${payloadSummary ? payloadSummary : "Sin payload operativo adicional."}</div>
     });
     document.getElementById("adminCode").value = getAdminCode();
     setActivePanel(activePanel);
+    setAuthenticatedState(false);
     startAutoRefresh();
     loadAll().catch((error) => console.error(error));
   </script>
