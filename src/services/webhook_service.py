@@ -75,6 +75,10 @@ class WebhookService:
             return "repite el ultimo pedido"
         if reply_id == "aira:show:menu":
             return "menu"
+        if reply_id == "aira:show:categories":
+            return "__show_menu__"
+        if reply_id.startswith("aira:menu-category:"):
+            return f"__show_category__:{reply_id.removeprefix('aira:menu-category:')}"
         if reply_id.startswith("aira:menu-item:"):
             return f"1 {reply_id.removeprefix('aira:menu-item:')}"
         return reply_title or reply_id

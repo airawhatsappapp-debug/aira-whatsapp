@@ -117,6 +117,10 @@ class ConversationService:
         payload: dict,
         location_data: dict | None = None,
     ) -> list[dict]:
+        menu_navigation_response = self._handle_menu_navigation(phone, message_text, stage, payload)
+        if menu_navigation_response:
+            return menu_navigation_response
+
         analysis = self.message_understanding_service.understand(message_text, stage)
         interaction = self.interaction_service.analyze(
             analysis["normalized"],
@@ -198,8 +202,8 @@ class ConversationService:
             if analysis["asks_menu"]:
                 return [
                     self._text_message(self._menu_prompt()),
-                    self._menu_list_message(),
-                    self._text_message("Cuando quieras, dime que te gustaria pedir."),
+                    self._menu_categories_message(),
+                    self._menu_support_buttons_message(),
                 ]
             if self._should_offer_last_order(payload):
                 if faq_responses:
@@ -213,16 +217,17 @@ class ConversationService:
                 ]
             if faq_responses:
                 return self._compose_messages(
-                    faq_responses + ["Cuando quieras, dime que te gustaria pedir y yo lo registro."],
-                    extra_messages=[self._menu_list_message()],
+                    faq_responses + ["🍽️ Cuando quieras, elige una categoria o escribeme tu pedido y yo lo registro."],
+                    extra_messages=[self._menu_categories_message(), self._menu_support_buttons_message()],
                 )
             return [
                 self._text_message(
-                    f"Encantada, {payload['customer_name']}. "
-                    "Cuentame que te gustaria pedir y yo lo voy registrando.\n"
+                    f"Encantada, {payload['customer_name']} ✨ "
+                    "Te ayudo a armar tu pedido rapidito.\n"
                     f"{self._menu_prompt()}"
                 ),
-                self._menu_list_message(),
+                self._menu_categories_message(),
+                self._menu_support_buttons_message(),
             ]
 
         if not payload["delivery_type"]:
@@ -551,18 +556,50 @@ class ConversationService:
             hydrated["order_detail"] = clean_detail
         return hydrated
 
+    def _handle_menu_navigation(
+        self,
+        phone: str,
+        message_text: str,
+        stage: str,
+        payload: dict,
+    ) -> list[dict] | None:
+        if message_text == "__show_menu__":
+            self.session_repository.save_session(phone, stage, payload)
+            return [
+                self._text_message("🍽️ Aqui tienes nuestras categorias. Elige la que te provoque."),
+                self._menu_categories_message(),
+                self._menu_support_buttons_message(),
+            ]
+
+        if not message_text.startswith("__show_category__:"):
+            return None
+
+        category_name = message_text.removeprefix("__show_category__:").strip()
+        items_message = self._category_items_list_message(category_name)
+        self.session_repository.save_session(phone, stage, payload)
+        if items_message.get("type") == "text":
+            return [items_message, self._menu_categories_message()]
+        return [
+            self._text_message(
+                f"{self._category_emoji(category_name)} *{category_name}*\n"
+                "Elige un producto y yo lo agrego al pedido."
+            ),
+            items_message,
+            self._menu_support_buttons_message(),
+        ]
+
     def _welcome_message(self, customer_name: str | None, customer_memory: dict | None = None) -> str:
         business = self.config_service.get_business()
         memory_line = self._build_memory_welcome(customer_memory)
         if customer_name:
             return (
-                f"Hola {customer_name}, soy {business['assistant_name']}. "
+                f"Hola {customer_name} 👋 Soy {business['assistant_name']}. "
                 "Estoy lista para ayudarte con tu pedido. "
                 f"{memory_line}"
-                "Dime que te gustaria pedir cuando quieras."
+                "Cuando quieras, elige una categoria o cuentame que te gustaria pedir."
             )
         return (
-            f"{business['greeting']}\n"
+            f"{business['greeting']} 🍽️\n"
             "Antes de empezar, me compartes tu nombre?"
         )
 
@@ -594,10 +631,10 @@ class ConversationService:
             if cash_change_for is not None
             else ""
         )
-        updated_line = "Actualice tu pedido con el nuevo detalle.\n" if payload.get("order_updated_notice") else ""
+        updated_line = "✨ Actualice tu pedido con el nuevo detalle.\n" if payload.get("order_updated_notice") else ""
         payload["order_updated_notice"] = False
         return (
-            f"{updated_line}Te resumo el pedido para confirmar:\n"
+            f"{updated_line}🧾 Te resumo el pedido para confirmar:\n"
             f"Cliente: {payload['customer_name']}\n"
             f"Detalle: {payload['order_detail']}\n"
             f"{items_block}"
@@ -620,7 +657,8 @@ class ConversationService:
         total_line = f"\nTotal final: S/ {order['total']:.2f}" if order.get("total") is not None else ""
         eta_line = f"\n{order['eta_label']}" if order.get("eta_label") else ""
         return (
-            f"Listo, tu pedido fue confirmado. Tu numero de orden es {order['order_number']}.\n"
+            f"✅ Listo, tu pedido fue confirmado.\n"
+            f"Numero de orden: {order['order_number']}\n"
             f"Detalle: {order['order_detail']}\n"
             f"Entrega: {order['order_type']}"
             f"{eta_line}"
@@ -628,7 +666,11 @@ class ConversationService:
         )
 
     def _menu_prompt(self) -> str:
-        return f"Menu rapido:\n{self.menu_service.get_menu_summary()}"
+        return (
+            "🍽️ Te comparto el menu rapido.\n"
+            "Si quieres pedir mas rapido, elige una categoria y luego el producto.\n"
+            f"{self.menu_service.get_menu_summary()}"
+        )
 
     @staticmethod
     def _build_memory_welcome(customer_memory: dict | None) -> str:
@@ -708,7 +750,7 @@ class ConversationService:
             return None
 
         return (
-            f"Si quieres, tambien puedo agregarte tu favorito {preferred_candidate}. "
+            f"✨ Si quieres, tambien puedo agregarte tu favorito {preferred_candidate}. "
             "Solo escribelo ahora y lo sumo al pedido."
         )
 
@@ -717,20 +759,20 @@ class ConversationService:
         preferred = customer_memory.get("preferred_order_type")
         if preferred:
             return (
-                f"Perfecto. Tu forma de entrega mas frecuente es {preferred.lower()}. "
+                f"🚚 Tu forma de entrega mas frecuente es {preferred.lower()}. "
                 "Elige si esta vez sera delivery o recojo."
             )
-        return "Perfecto. Tu pedido sera para delivery o prefieres recojo?"
+        return "🚚 Perfecto. Tu pedido sera para delivery o prefieres recojo?"
 
     def _address_prompt(self, payload: dict) -> str:
         customer_memory = payload.get("customer_memory") or {}
         last_address = customer_memory.get("last_address")
         if last_address:
             return (
-                "Listo, sera delivery. Comparteme la direccion de entrega, por favor. "
+                "📍 Listo, sera delivery. Comparteme la direccion de entrega, por favor. "
                 f"Si quieres usar la ultima direccion registrada, escribe 'usar la misma direccion': {last_address}"
             )
-        return "Listo, sera delivery. Comparteme la direccion de entrega, por favor."
+        return "📍 Listo, sera delivery. Comparteme la direccion de entrega, por favor."
 
     async def _maybe_validate_address(self, phone: str, payload: dict) -> list[dict] | None:
         suggestion = await self.address_validation_service.suggest_address(payload.get("address"))
@@ -796,21 +838,21 @@ class ConversationService:
         preferred = customer_memory.get("preferred_payment_method")
         if preferred:
             return (
-                f"Como deseas pagar? Puede ser Efectivo, Yape o Transferencia. "
+                f"💳 Como deseas pagar? Puede ser Efectivo, Yape o Transferencia. "
                 f"Tu metodo mas usado es {preferred}."
             )
-        return "Como deseas pagar? Puede ser Efectivo, Yape o Transferencia."
+        return "💳 Como deseas pagar? Puede ser Efectivo, Yape o Transferencia."
 
     def _observations_prompt(self, payload: dict) -> str:
         customer_memory = payload.get("customer_memory") or {}
         preferred_observation = customer_memory.get("preferred_observation")
         if preferred_observation:
             return (
-                "Perfecto. Quieres agregar alguna observacion? Si no, escribe 'no'. "
+                "📝 Perfecto. Quieres agregar alguna observacion? Si no, escribe 'no'. "
                 f"Tu indicacion mas frecuente es: {preferred_observation}. "
                 "Si quieres usarla otra vez, escribe 'misma observacion'."
             )
-        return "Perfecto. Quieres agregar alguna observacion? Si no, escribe 'no'."
+        return "📝 Perfecto. Quieres agregar alguna observacion? Si no, escribe 'no'."
 
     def _get_customer_memory(self, phone: str, customer_name: str | None) -> dict | None:
         summary = self.order_repository.get_customer_operational_summary(phone)
@@ -834,9 +876,9 @@ class ConversationService:
     def _last_order_prompt(self, payload: dict) -> str:
         latest_order = self._latest_customer_order(payload.get("customer_memory"))
         if not latest_order:
-            return "Cuando quieras, dime que te gustaria pedir y yo lo registro."
+            return "🍽️ Cuando quieras, dime que te gustaria pedir y yo lo registro."
         return (
-            f"Si quieres, puedo repetir tu ultimo pedido: {latest_order['order_detail']}. "
+            f"🔁 Si quieres, puedo repetir tu ultimo pedido: {latest_order['order_detail']}. "
             "Tambien puedes elegir otra opcion."
         )
 
@@ -853,48 +895,80 @@ class ConversationService:
     def _last_order_buttons_message() -> dict:
         return {
             "type": "reply_buttons",
-            "body": "Elige una opcion para avanzar con tu pedido.",
+            "body": "✨ Elige una opcion para avanzar con tu pedido.",
             "buttons": [
                 {"id": "aira:repeat:last-order", "title": "Repetir ultimo"},
-                {"id": "aira:show:menu", "title": "Ver menu"},
+                {"id": "aira:show:categories", "title": "Ver categorias"},
             ],
             "fallback_text": "Responde 'repite el ultimo pedido' o 'menu'.",
         }
 
-    def _menu_list_message(self) -> dict:
-        categories = self.menu_service.list_menu()
-        sections = []
+    def _menu_categories_message(self) -> dict:
+        categories = self.menu_service.list_active_categories()
+        rows = []
         total_rows = 0
         for category in categories:
-            rows = []
-            for item in category["items"]:
-                if not item["is_active"]:
-                    continue
-                if total_rows >= 10:
-                    break
-                rows.append(
-                    {
-                        "id": f"aira:menu-item:{item['name']}",
-                        "title": item["name"],
-                        "description": f"S/ {item['price']:.2f}",
-                    }
-                )
-                total_rows += 1
-            if rows:
-                sections.append({"title": category["name"], "rows": rows})
             if total_rows >= 10:
                 break
+            active_items = category["items"]
+            prices = [item["price"] for item in active_items]
+            description = (
+                f"{len(active_items)} opciones · desde S/ {min(prices):.2f}"
+                if prices
+                else "Ver opciones"
+            )
+            rows.append(
+                {
+                    "id": f"aira:menu-category:{category['name']}",
+                    "title": f"{self._category_emoji(category['name'])} {category['name']}"[:24],
+                    "description": description[:72],
+                }
+            )
+            total_rows += 1
 
-        if not sections:
+        if not rows:
             return self._text_message(self._menu_prompt())
 
         return {
             "type": "list",
-            "header": "Menu",
-            "body": "Elige un producto para empezar o escribe tu pedido completo si prefieres.",
-            "button_text": "Ver opciones",
-            "sections": sections,
+            "header": "Menu Aira",
+            "body": "Elige una categoria para ver opciones y armar tu pedido mas rapido.",
+            "button_text": "Ver categorias",
+            "sections": [{"title": "Categorias", "rows": rows}],
             "fallback_text": self._menu_prompt(),
+        }
+
+    def _category_items_list_message(self, category_name: str) -> dict:
+        items = self.menu_service.get_active_items_by_category(category_name)
+        if not items:
+            return self._text_message("No encontre productos activos en esa categoria. Te muestro las categorias disponibles.")
+
+        rows = [
+            {
+                "id": f"aira:menu-item:{item['name']}",
+                "title": item["name"][:24],
+                "description": f"S/ {item['price']:.2f}"[:72],
+            }
+            for item in items[:10]
+        ]
+        return {
+            "type": "list",
+            "header": category_name[:60],
+            "body": f"{self._category_emoji(category_name)} Elige el producto que quieres agregar a tu pedido.",
+            "button_text": "Ver productos",
+            "sections": [{"title": category_name[:24], "rows": rows}],
+            "fallback_text": f"Categoria {category_name}: " + ", ".join(item["name"] for item in items),
+        }
+
+    def _menu_support_buttons_message(self) -> dict:
+        return {
+            "type": "reply_buttons",
+            "body": "⚡ Si prefieres, tambien puedes escribirme tu pedido completo.",
+            "buttons": [
+                {"id": "aira:show:categories", "title": "Categorias"},
+                {"id": "aira:show:menu", "title": "Menu rapido"},
+            ],
+            "fallback_text": "Responde 'menu' para ver opciones o escribe tu pedido completo.",
         }
 
     @staticmethod
@@ -926,13 +1000,27 @@ class ConversationService:
     def _confirmation_buttons_message() -> dict:
         return {
             "type": "reply_buttons",
-            "body": "Confirma si el pedido esta correcto.",
+            "body": "✅ Confirma si el pedido esta correcto.",
             "buttons": [
                 {"id": "aira:confirm:yes", "title": "Confirmar"},
                 {"id": "aira:confirm:no", "title": "Corregir"},
             ],
             "fallback_text": "Responde 'si' para confirmar o 'no' para corregir.",
         }
+
+    def _category_emoji(self, category_name: str) -> str:
+        normalized = self._normalize(category_name)
+        if any(word in normalized for word in ("hamburguesa", "burger", "sandwich")):
+            return "🍔"
+        if any(word in normalized for word in ("bebida", "gaseosa", "refresco", "jugo", "agua")):
+            return "🥤"
+        if any(word in normalized for word in ("papa", "acompanamiento", "complemento", "extra")):
+            return "🍟"
+        if any(word in normalized for word in ("postre", "dulce", "helado")):
+            return "🍰"
+        if any(word in normalized for word in ("pollo", "broaster", "parrilla", "carne")):
+            return "🍗"
+        return "🍽️"
 
     @staticmethod
     def _text_message(body: str) -> dict:
@@ -1121,7 +1209,12 @@ class ConversationService:
         if reminder:
             texts.append(reminder)
 
-        return self._compose_messages(texts)
+        extra_messages: list[dict] = []
+        if any("menu" in self._normalize(text) for text in texts):
+            extra_messages.append(self._menu_categories_message())
+            extra_messages.append(self._menu_support_buttons_message())
+
+        return self._compose_messages(texts, extra_messages=extra_messages or None)
 
     def _build_stage_reminder(self, stage: str, payload: dict) -> str | None:
         reminders = {

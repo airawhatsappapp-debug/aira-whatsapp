@@ -47,6 +47,28 @@ class MenuService:
                     items.append(item)
         return items
 
+    def list_active_categories(self) -> list[dict]:
+        categories = self.list_menu()
+        active_categories: list[dict] = []
+        for category in categories:
+            active_items = [item for item in category["items"] if item["is_active"]]
+            if not active_items:
+                continue
+            active_categories.append(
+                {
+                    "name": category["name"],
+                    "items": active_items,
+                }
+            )
+        return active_categories
+
+    def get_active_items_by_category(self, category_name: str) -> list[dict]:
+        normalized_target = category_name.strip().lower()
+        for category in self.list_active_categories():
+            if category["name"].strip().lower() == normalized_target:
+                return category["items"]
+        return []
+
     def get_item_category_map(self) -> dict[str, str]:
         categories = self.list_menu()
         mapping: dict[str, str] = {}
