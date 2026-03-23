@@ -30,6 +30,11 @@ class BusinessUpdateRequest(BaseModel):
     assistant_name: str
     assistant_avatar_url: str | None = None
     admin_access_code: str
+    whatsapp_business_number: str | None = None
+    whatsapp_channel_status: str = "no_configurado"
+    whatsapp_channel_note: str | None = None
+    subscription_plan: str = "aira_start"
+    subscription_status: str = "beta_activa"
     business_type: str = "restaurante"
     primary_goal: str = "tomar_pedidos"
     tone_style: str = "cordial"
@@ -54,6 +59,11 @@ class BusinessResponse(BaseModel):
     assistant_name: str
     assistant_avatar_url: str | None = None
     admin_access_code: str
+    whatsapp_business_number: str | None = None
+    whatsapp_channel_status: str = "no_configurado"
+    whatsapp_channel_note: str | None = None
+    subscription_plan: str = "aira_start"
+    subscription_status: str = "beta_activa"
     business_type: str = "restaurante"
     primary_goal: str = "tomar_pedidos"
     tone_style: str = "cordial"

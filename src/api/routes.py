@@ -381,6 +381,11 @@ def get_business(_: str = Header(default=None, alias="x-admin-code")) -> Busines
         assistant_name=business["assistant_name"],
         assistant_avatar_url=business.get("assistant_avatar_url"),
         admin_access_code=business.get("admin_access_code", ""),
+        whatsapp_business_number=business.get("whatsapp_business_number"),
+        whatsapp_channel_status=business.get("whatsapp_channel_status", "no_configurado"),
+        whatsapp_channel_note=business.get("whatsapp_channel_note"),
+        subscription_plan=business.get("subscription_plan", "aira_start"),
+        subscription_status=business.get("subscription_status", "beta_activa"),
         business_type=business.get("business_type", "restaurante"),
         primary_goal=business.get("primary_goal", "tomar_pedidos"),
         tone_style=business.get("tone_style", "cordial"),
@@ -423,10 +428,24 @@ def update_business(data: BusinessUpdateRequest, _: str = Header(default=None, a
     if not payment_methods:
         raise HTTPException(status_code=400, detail="At least one payment method is required")
     admin_access_code = data.admin_access_code.strip()
-    if len(admin_access_code) < 4:
-        raise HTTPException(status_code=400, detail="Admin access code must have at least 4 characters")
+    if len(admin_access_code) < 5:
+        raise HTTPException(status_code=400, detail="Admin access code must have at least 5 characters")
+    if len(admin_access_code) > 9:
+        raise HTTPException(status_code=400, detail="Admin access code must have at most 9 characters")
     if data.pickup_eta_minutes < 0 or data.delivery_eta_minutes < 0:
         raise HTTPException(status_code=400, detail="ETA values cannot be negative")
+    whatsapp_status = (data.whatsapp_channel_status or "no_configurado").strip().lower()
+    allowed_whatsapp_statuses = {"no_configurado", "pendiente", "conectado"}
+    if whatsapp_status not in allowed_whatsapp_statuses:
+        raise HTTPException(status_code=400, detail="Invalid WhatsApp channel status")
+    subscription_plan = (data.subscription_plan or "aira_start").strip().lower()
+    allowed_subscription_plans = {"aira_start", "aira_pro", "aira_business"}
+    if subscription_plan not in allowed_subscription_plans:
+        raise HTTPException(status_code=400, detail="Invalid subscription plan")
+    subscription_status = (data.subscription_status or "beta_activa").strip().lower()
+    allowed_subscription_statuses = {"beta_activa", "activa", "pendiente", "suspendida"}
+    if subscription_status not in allowed_subscription_statuses:
+        raise HTTPException(status_code=400, detail="Invalid subscription status")
 
     business = container.config_service.update_business(
         {
@@ -434,6 +453,11 @@ def update_business(data: BusinessUpdateRequest, _: str = Header(default=None, a
             "assistant_name": data.assistant_name.strip(),
             "assistant_avatar_url": (data.assistant_avatar_url or "").strip(),
             "admin_access_code": admin_access_code,
+            "whatsapp_business_number": (data.whatsapp_business_number or "").strip(),
+            "whatsapp_channel_status": whatsapp_status,
+            "whatsapp_channel_note": (data.whatsapp_channel_note or "").strip(),
+            "subscription_plan": subscription_plan,
+            "subscription_status": subscription_status,
             "business_type": data.business_type.strip() or "restaurante",
             "primary_goal": data.primary_goal.strip() or "tomar_pedidos",
             "tone_style": data.tone_style.strip() or "cordial",
@@ -466,6 +490,11 @@ def update_business(data: BusinessUpdateRequest, _: str = Header(default=None, a
         assistant_name=business["assistant_name"],
         assistant_avatar_url=business.get("assistant_avatar_url"),
         admin_access_code=business.get("admin_access_code", ""),
+        whatsapp_business_number=business.get("whatsapp_business_number"),
+        whatsapp_channel_status=business.get("whatsapp_channel_status", "no_configurado"),
+        whatsapp_channel_note=business.get("whatsapp_channel_note"),
+        subscription_plan=business.get("subscription_plan", "aira_start"),
+        subscription_status=business.get("subscription_status", "beta_activa"),
         business_type=business.get("business_type", "restaurante"),
         primary_goal=business.get("primary_goal", "tomar_pedidos"),
         tone_style=business.get("tone_style", "cordial"),
