@@ -1,7 +1,17 @@
 {
   "business_name": "Aira Food",
   "assistant_name": "Aira",
+  "assistant_avatar_url": "",
   "admin_access_code": "aira123",
+  "business_type": "restaurante",
+  "primary_goal": "tomar_pedidos",
+  "tone_style": "cordial",
+  "emoji_level": "moderado",
+  "enabled_capabilities": [
+    "tomar_pedidos",
+    "responder_consultas",
+    "mostrar_catalogo"
+  ],
   "pickup_eta_minutes": 20,
   "delivery_eta_minutes": 45,
   "currency": "PEN",

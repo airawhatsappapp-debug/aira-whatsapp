@@ -128,6 +128,77 @@
       gap: 10px;
       align-items: end;
     }
+    .session-bar {
+      display: none;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: center;
+      padding: 16px 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(52, 240, 138, 0.18);
+      background:
+        radial-gradient(circle at top right, rgba(52, 240, 138, 0.18), transparent 24%),
+        linear-gradient(180deg, rgba(11, 24, 18, 0.98) 0%, rgba(9, 18, 14, 0.96) 100%);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+    .session-profile {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+    .session-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 999px;
+      border: 1px solid rgba(52, 240, 138, 0.26);
+      background:
+        radial-gradient(circle at top left, rgba(74, 255, 149, 0.42), transparent 38%),
+        linear-gradient(145deg, rgba(17, 51, 33, 0.98) 0%, rgba(8, 16, 13, 0.98) 100%);
+      display: grid;
+      place-items: center;
+      color: #dcfff0;
+      font-size: 1.1rem;
+      font-weight: 800;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    }
+    .session-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .session-meta {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+    .session-meta strong {
+      font-size: 1.05rem;
+      color: #f6fff9;
+    }
+    .session-meta .hint {
+      margin: 0;
+    }
+    .session-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .ghost-button {
+      border: 1px solid rgba(52, 240, 138, 0.26);
+      background: rgba(52, 240, 138, 0.08);
+      color: #ecfff5;
+    }
+    .ghost-button:hover {
+      transform: translateY(-1px);
+      background: rgba(52, 240, 138, 0.14);
+      box-shadow: 0 8px 18px rgba(16, 184, 102, 0.14);
+    }
     .helper-list {
       display: grid;
       gap: 12px;
@@ -206,6 +277,21 @@
     }
     .app-shell:not(.locked) .hero-copy {
       padding-bottom: 20px;
+    }
+    .app-shell:not(.locked) .access-grid,
+    .app-shell:not(.locked) .section-kicker,
+    .app-shell:not(.locked) #accessTitle,
+    .app-shell:not(.locked) #accessHint {
+      display: none;
+    }
+    .app-shell:not(.locked) .session-bar {
+      display: grid;
+    }
+    .app-shell:not(.locked) .access-shell {
+      grid-template-columns: 1fr;
+    }
+    .app-shell:not(.locked) .access-side {
+      display: none;
     }
     .auth-badge {
       display: inline-flex;
@@ -533,6 +619,8 @@
     @media (max-width: 1120px) {
       .grid, .metrics, .row2, .row3, .filters, .hero-shell, .access-shell, .summary-strip, .section-guide { grid-template-columns: 1fr; }
       .access-grid { grid-template-columns: 1fr; }
+      .session-bar { grid-template-columns: 1fr; }
+      .session-actions { justify-content: flex-start; }
       .tabbar { flex-direction: column; }
       .tab-button { width: 100%; }
     }
@@ -575,12 +663,25 @@
           <h2 style="margin-bottom: 8px;" id="accessTitle">Inicia sesión para entrar al panel</h2>
           <div class="hint" id="accessHint">Usa tu código de acceso para cargar pedidos, negocio y menú. Si cambias el código del negocio, este panel lo recordará al guardar.</div>
         </div>
+        <div class="session-bar" id="sessionBar">
+          <div class="session-profile">
+            <div class="session-avatar" id="sessionAvatar">AI</div>
+            <div class="session-meta">
+              <strong id="sessionName">Aira</strong>
+              <div class="hint" id="sessionSubtitle">Panel activo y listo para operar.</div>
+            </div>
+          </div>
+          <div class="session-actions">
+            <button class="ghost-button" id="openBusinessSettings" type="button">Configuración</button>
+            <button class="alt" id="logoutButton" type="button">Cerrar sesión</button>
+          </div>
+        </div>
         <div class="access-grid">
           <label>Código de acceso
             <input id="adminCode" type="password" placeholder="Ingresa tu código" />
           </label>
           <button id="loginButton" type="button">Entrar al panel</button>
-          <button class="alt" id="logoutButton" type="button">Cerrar sesión</button>
+          <button class="ghost-button" type="button" id="loginHelpButton">¿Qué hago aquí?</button>
         </div>
         <div class="status" id="authStatus"></div>
       </div>
@@ -711,8 +812,12 @@
               <label>Nombre de la asistente<input id="assistant_name" /></label>
             </div>
             <div class="row2">
+              <label>Imagen o avatar de Aira<input id="assistant_avatar_url" placeholder="https://... o enlace de imagen del negocio" /></label>
               <label>Código de acceso<input id="admin_access_code" /></label>
+            </div>
+            <div class="row2">
               <label>Delivery base<input id="default_delivery_fee" type="number" step="0.01" /></label>
+              <div></div>
             </div>
             <label>Saludo inicial<textarea id="greeting"></textarea></label>
             <div class="row2">
@@ -862,6 +967,28 @@
       node.textContent = message;
       node.style.color = isError ? "#b54824" : "#687268";
     }
+    function buildAssistantInitials(name) {
+      const cleaned = (name || "Aira").trim();
+      if (!cleaned) return "AI";
+      const parts = cleaned.split(/\s+/).filter(Boolean).slice(0, 2);
+      return parts.map((part) => part[0]?.toUpperCase() || "").join("") || "AI";
+    }
+    function updateSessionProfile(data = {}) {
+      const assistantName = (data.assistant_name || document.getElementById("assistant_name")?.value || "Aira").trim() || "Aira";
+      const businessName = (data.business_name || document.getElementById("business_name")?.value || "tu negocio").trim() || "tu negocio";
+      const avatarUrl = (data.assistant_avatar_url || document.getElementById("assistant_avatar_url")?.value || "").trim();
+      const avatar = document.getElementById("sessionAvatar");
+      const sessionName = document.getElementById("sessionName");
+      const sessionSubtitle = document.getElementById("sessionSubtitle");
+      if (sessionName) sessionName.textContent = assistantName;
+      if (sessionSubtitle) sessionSubtitle.textContent = `Asistente activa de ${businessName}.`;
+      if (!avatar) return;
+      if (avatarUrl) {
+        avatar.innerHTML = `<img src="${escapeHtml(avatarUrl)}" alt="${escapeHtml(assistantName)}" />`;
+      } else {
+        avatar.textContent = buildAssistantInitials(assistantName);
+      }
+    }
     function setAuthenticatedState(isAuthenticated) {
       const shell = document.getElementById("appShell");
       const accessShell = document.querySelector(".access-shell");
@@ -883,6 +1010,7 @@
       if (loginButton) {
         loginButton.textContent = isAuthenticated ? "Panel activo" : "Entrar al panel";
       }
+      if (isAuthenticated) updateSessionProfile();
     }
     function setActivePanel(panel) {
       activePanel = panel;
@@ -917,6 +1045,7 @@
     function businessToForm(data) {
       document.getElementById("business_name").value = data.business_name || "";
       document.getElementById("assistant_name").value = data.assistant_name || "";
+      document.getElementById("assistant_avatar_url").value = data.assistant_avatar_url || "";
       document.getElementById("admin_access_code").value = data.admin_access_code || "";
       document.getElementById("business_type").value = data.business_type || "restaurante";
       document.getElementById("primary_goal").value = data.primary_goal || "tomar_pedidos";
@@ -941,12 +1070,14 @@
         const message = rule.message ? `=>${rule.message}` : "";
         return `${rule.trigger_category}=>${rule.suggested_item}${message}`;
       }).join("\n");
+      updateSessionProfile(data);
       renderBusinessPreview();
     }
     function formToBusiness() {
       return {
         business_name: document.getElementById("business_name").value.trim(),
         assistant_name: document.getElementById("assistant_name").value.trim(),
+        assistant_avatar_url: document.getElementById("assistant_avatar_url").value.trim(),
         admin_access_code: document.getElementById("admin_access_code").value.trim(),
         business_type: document.getElementById("business_type").value,
         primary_goal: document.getElementById("primary_goal").value,
@@ -1483,6 +1614,7 @@ ${payloadSummary ? payloadSummary : "Sin payload operativo adicional."}</div>
           localStorage.setItem("aira_admin_code", savedBusiness.admin_access_code);
           document.getElementById("adminCode").value = savedBusiness.admin_access_code;
         }
+        updateSessionProfile(savedBusiness);
         setStatus("businessStatus", "Negocio actualizado correctamente.");
       } catch (error) {
         setStatus("businessStatus", `No se pudo guardar: ${error.message}`, true);
@@ -1537,9 +1669,20 @@ ${payloadSummary ? payloadSummary : "Sin payload operativo adicional."}</div>
     });
     document.getElementById("orderSearch").addEventListener("input", applyOrderFilters);
     document.getElementById("orderStatusFilter").addEventListener("change", applyOrderFilters);
-    ["business_type", "primary_goal", "tone_style", "emoji_level", "business_name", "assistant_name"].forEach((id) => {
+    ["business_type", "primary_goal", "tone_style", "emoji_level", "business_name", "assistant_name", "assistant_avatar_url"].forEach((id) => {
       document.getElementById(id).addEventListener("input", renderBusinessPreview);
       document.getElementById(id).addEventListener("change", renderBusinessPreview);
+    });
+    ["business_name", "assistant_name", "assistant_avatar_url"].forEach((id) => {
+      document.getElementById(id).addEventListener("input", () => updateSessionProfile());
+      document.getElementById(id).addEventListener("change", () => updateSessionProfile());
+    });
+    document.getElementById("openBusinessSettings").addEventListener("click", () => {
+      setActivePanel("negocio");
+      document.getElementById("negocioSection").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    document.getElementById("loginHelpButton").addEventListener("click", () => {
+      setStatus("authStatus", "Ingresa el código del negocio para abrir el panel. Luego podrás ver pedidos, negocio y menú.", false);
     });
     document.querySelectorAll(".capability").forEach((checkbox) => {
       checkbox.addEventListener("change", renderBusinessPreview);

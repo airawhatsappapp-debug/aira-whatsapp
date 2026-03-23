@@ -28,7 +28,13 @@ class CrossSellRuleInput(BaseModel):
 class BusinessUpdateRequest(BaseModel):
     business_name: str
     assistant_name: str
+    assistant_avatar_url: str | None = None
     admin_access_code: str
+    business_type: str = "restaurante"
+    primary_goal: str = "tomar_pedidos"
+    tone_style: str = "cordial"
+    emoji_level: str = "moderado"
+    enabled_capabilities: list[str] = Field(default_factory=list)
     greeting: str
     business_hours: str
     business_address: str
@@ -46,7 +52,13 @@ class BusinessUpdateRequest(BaseModel):
 class BusinessResponse(BaseModel):
     business_name: str
     assistant_name: str
+    assistant_avatar_url: str | None = None
     admin_access_code: str
+    business_type: str = "restaurante"
+    primary_goal: str = "tomar_pedidos"
+    tone_style: str = "cordial"
+    emoji_level: str = "moderado"
+    enabled_capabilities: list[str] = Field(default_factory=list)
     greeting: str
     business_hours: str
     business_address: str
